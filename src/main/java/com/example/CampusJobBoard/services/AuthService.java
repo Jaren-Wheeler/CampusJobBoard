@@ -32,34 +32,41 @@ public class AuthService {
      * Admin accounts cannot self-register.
      */
     public AuthResponse register(RegisterRequest request) {
+
+        // Prevent duplicate accounts
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new RuntimeException("Email already registered");
         }
 
-        if (request.getRole().toString().equals("ADMIN")) {
+        // Prevent users from self-registering as ADMIN
+        if (request.getRole() == null) {
+            throw new RuntimeException("Role is required");
+        }
+
+        if (request.getRole() == User.Role.ADMIN) {
             throw new RuntimeException("Cannot self-register as admin");
         }
 
+        // Create new user
         User newUser = new User();
         newUser.setFullName(request.getFullName());
         newUser.setEmail(request.getEmail());
         newUser.setPassword(passwordEncoder.encode(request.getPassword()));
         newUser.setRole(request.getRole());
+
         userRepository.save(newUser);
 
-        // Build UserDetails for token generation
-        UserDetails userDetails = org.springframework.security.core.userdetails.User
-                .withUsername(newUser.getEmail())
-                .password(newUser.getPassword())
-                .roles(newUser.getRole().name())
-                .build();
+        String jwtToken = jwtService.generateToken(
+                new org.springframework.security.core.userdetails.User(
+                        newUser.getEmail(),
+                        newUser.getPassword(),
+                        java.util.List.of()
+                )
+        );
 
-        // Generate JWT after registration
-        String jwtToken = jwtService.generateToken(userDetails);
-
-        // Return the token and role
-        return new AuthResponse(jwtToken, newUser.getRole().toString());
+        return new AuthResponse(jwtToken, newUser.getRole().name());
     }
+
 
     /**
      * Authenticates an existing user and returns a signed JWT token.

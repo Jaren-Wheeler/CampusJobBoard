@@ -15,7 +15,7 @@ public class AuthResponse {
     /** The user's role within the system */
     private String role;
 
-    /** Default constructor for frameworks and serialization */
+    /** Default constructor */
     public AuthResponse() {}
 
     /** Convenience constructor for creating quick responses */
