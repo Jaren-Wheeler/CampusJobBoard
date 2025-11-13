@@ -27,7 +27,7 @@ public class RegisterRequest {
     @NotBlank
     private String password;
 
-    /** Role assigned at registration (e.g., STUDENT, EMPLOYER, ADMIN) */
+    /** Role assigned at registration (Student/Employer) */
     private Role role;
 
     public String getFullName() { return fullName; }
