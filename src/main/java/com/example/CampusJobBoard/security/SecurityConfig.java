@@ -37,39 +37,41 @@ public class SecurityConfig {
      * Defines security rules and integrates the JwtAuthFilter so that
      * tokens are validated before any controller logic executes.
      */
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // Disable CSRF
                 .csrf(AbstractHttpConfigurer::disable)
 
-                // Define access control rules for URL patterns
                 .authorizeHttpRequests(auth -> auth
-                        // Public endpoints (authentication)
+
+                        // Frontend pages must be PUBLIC
+                        .requestMatchers("/", "/login", "/css/**", "/js/**", "/images/**").permitAll()
+                        .requestMatchers("/student/**", "/employer/**", "/admin/**").permitAll()
+
+                        // Backend API auth endpoints
                         .requestMatchers("/api/auth/**").permitAll()
 
-                        // Role-protected routes (backed by JWT roles)
-                        .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
-                        .requestMatchers("/employer/**").hasAuthority("ROLE_EMPLOYER")
-                        .requestMatchers("/student/**").hasAuthority("ROLE_STUDENT")
+                        // Protected backend API routes (DATA + ACTIONS)
+                        .requestMatchers("/api/student/**").hasAuthority("STUDENT")
+                        .requestMatchers("/api/employer/**").hasAuthority("EMPLOYER")
+                        .requestMatchers("/api/admin/**").hasAuthority("ADMIN")
 
-                        // Any other request must be authenticated
+                        // Everything else requires authentication
                         .anyRequest().authenticated()
                 )
 
-                // Use stateless session policy as JWT manages auth
                 .sessionManagement(sm ->
                         sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-                // Inserts JWT validation before username/password login filter
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
 
-                // Disable legacy login options
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable);
 
         return http.build();
     }
+
 
     /**
      * Provides a BCryptPasswordEncoder bean for hashing passwords
