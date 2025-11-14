@@ -19,4 +19,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     /** Checks if a user with the given email already exists */
     boolean existsByEmail(String email);
+
+    /** Counts how many users have a specific role (used to limit ADMIN creation) */
+    long countByRole(User.Role role);
 }

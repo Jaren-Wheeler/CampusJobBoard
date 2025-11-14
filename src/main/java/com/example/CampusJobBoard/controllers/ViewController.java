@@ -7,20 +7,22 @@ import org.springframework.web.bind.annotation.GetMapping;
  * Handles all page-level routing for the frontend.
  * This controller serves Thymeleaf template files for:
  * - Login page
- * - Student dashboard
- * - Employer dashboard
- * - Admin dashboard
- * No backend data is injected here.
- * These pages act as shells which load JavaScript that
- * fetches real data from the API layer (/api/...).
+ * - Dashboards for Student, Employer, Admin
  */
 @Controller
 public class ViewController {
 
     /**
+     * Default root route.
+     * Visiting "/" redirects user to /login.
+     */
+    @GetMapping("/")
+    public String redirectToLogin() {
+        return "redirect:/login";
+    }
+
+    /**
      * Displays the login/register page.
-     * Template path: src/main/resources/templates/auth/login.html
-     * URL: GET /login
      */
     @GetMapping("/login")
     public String loginPage() {
@@ -28,9 +30,7 @@ public class ViewController {
     }
 
     /**
-     * Displays the student dashboard page.
-     * Template path: templates/student/dashboard.html
-     * URL: GET /student/dashboard
+     * Student dashboard.
      */
     @GetMapping("/student/dashboard")
     public String studentDash() {
@@ -38,9 +38,7 @@ public class ViewController {
     }
 
     /**
-     * Displays the employer dashboard page.
-     * Template path: templates/employer/dashboard.html
-     * URL: GET /employer/dashboard
+     * Employer dashboard.
      */
     @GetMapping("/employer/dashboard")
     public String employerDash() {
@@ -48,9 +46,7 @@ public class ViewController {
     }
 
     /**
-     * Displays the admin dashboard page.
-     * Template path: templates/admin/dashboard.html
-     * URL: GET /admin/dashboard
+     * Admin dashboard.
      */
     @GetMapping("/admin/dashboard")
     public String adminDash() {

@@ -9,30 +9,41 @@ const loginForm = document.getElementById("loginForm");
 const registerForm = document.getElementById("registerForm");
 const registerSuccess = document.getElementById("registerSuccess");
 
-// When Login tab is clicked
+// -----------------------------------------------------
+// Tab Switching (Login <-> Register)
+// -----------------------------------------------------
+
 loginTab.addEventListener("click", () => {
 
-    // Show login form and hide registration form
+    // Show login form
     loginForm.classList.remove("hidden");
     registerForm.classList.add("hidden");
     registerSuccess.classList.add("hidden");
 
-    loginTab.classList.add("bg-white", "shadow");
-    registerTab.classList.remove("bg-white", "shadow");
+    // Active login style
+    loginTab.classList.add("bg-[#E6EED8]", "text-[#2A3810]", "shadow-sm");
+    loginTab.classList.remove("text-gray-600");
+
+    // Inactive register style
+    registerTab.classList.remove("bg-[#E6EED8]", "text-[#2A3810]", "shadow-sm");
+    registerTab.classList.add("text-gray-600");
 });
 
-// When Register tab is clicked
 registerTab.addEventListener("click", () => {
 
-    // Show registration form and hide login
+    // Show registration form
     loginForm.classList.add("hidden");
     registerForm.classList.remove("hidden");
     registerSuccess.classList.add("hidden");
 
-    registerTab.classList.add("bg-white", "shadow");
-    loginTab.classList.remove("bg-white", "shadow");
-});
+    // Active register style
+    registerTab.classList.add("bg-[#E6EED8]", "text-[#2A3810]", "shadow-sm");
+    registerTab.classList.remove("text-gray-600");
 
+    // Inactive login style
+    loginTab.classList.remove("bg-[#E6EED8]", "text-[#2A3810]", "shadow-sm");
+    loginTab.classList.add("text-gray-600");
+});
 
 // -----------------------------------------------------
 // User Registration Handler
