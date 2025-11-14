@@ -38,12 +38,20 @@ public class AuthService {
             throw new RuntimeException("Email already registered");
         }
 
-        // Prevent users from self-registering as ADMIN
+        // Role must exist
         if (request.getRole() == null) {
             throw new RuntimeException("Role is required");
         }
 
+        // Prevent users from self-registering as ADMIN
         if (request.getRole() == User.Role.ADMIN) {
+
+            //  Enforce max 3 admin accounts
+            long adminCount = userRepository.countByRole(User.Role.ADMIN);
+            if (adminCount >= 3) {
+                throw new RuntimeException("Maximum of 3 admin accounts allowed");
+            }
+
             throw new RuntimeException("Cannot self-register as admin");
         }
 
@@ -66,7 +74,6 @@ public class AuthService {
 
         return new AuthResponse(jwtToken, newUser.getRole().name());
     }
-
 
     /**
      * Authenticates an existing user and returns a signed JWT token.
