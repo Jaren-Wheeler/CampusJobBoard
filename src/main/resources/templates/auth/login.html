@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Login | Campus Job Board</title>
+
+    <!-- TailwindCSS  -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<!-- Center the card in the viewport -->
+<body class="bg-gray-100 flex justify-center items-center h-screen">
+
+<!-- Main card container -->
+<div class="bg-white w-full max-w-md rounded-xl shadow-lg p-8">
+
+    <!-- Page title and title -->
+    <h2 class="text-2xl font-semibold text-center mb-2">Welcome</h2>
+    <p class="text-center text-gray-500 mb-6">
+        Sign in to your account or create a new one
+    </p>
+
+    <!-- ------------------------------------------------------ -->
+    <!-- Login / Register Toggle Tabs -->
+    <!-- ------------------------------------------------------ -->
+    <div class="flex mb-6 bg-gray-200 rounded-full p-1">
+        <!-- Default active tab: Login -->
+        <button id="loginTab"
+                class="w-1/2 py-2 rounded-full bg-white font-medium shadow">
+            Login
+        </button>
+
+        <!-- Register tab  -->
+        <button id="registerTab"
+                class="w-1/2 py-2 rounded-full font-medium text-gray-600">
+            Register
+        </button>
+    </div>
+
+    <!-- ------------------------------------------------------ -->
+    <!-- Success message -->
+    <!-- ------------------------------------------------------ -->
+    <p id="registerSuccess"
+       class="hidden text-green-600 text-center mb-4 font-medium">
+        Account created successfully! Please sign in.
+    </p>
+
+    <!-- Login error message -->
+    <p id="loginError"
+       class="hidden text-red-600 text-center mb-4 font-medium">
+        Invalid email or password.
+    </p>
+
+    <!-- ------------------------------------------------------ -->
+    <!-- LOGIN FORM -->
+    <!-- ------------------------------------------------------ -->
+    <div id="loginForm">
+        <label for="loginEmail" class="block mb-2 font-medium">Email</label>
+        <input id="loginEmail"
+               type="email"
+               class="w-full p-3 border rounded-lg mb-4"
+               placeholder="name@example.com">
+
+        <label for="loginPassword" class="block mb-2 font-medium">Password</label>
+        <input id="loginPassword"
+               type="password"
+               class="w-full p-3 border rounded-lg mb-6"
+               placeholder="••••••••">
+
+        <!-- Login button triggers login.js -->
+        <button id="loginBtn"
+                class="w-full bg-black text-white py-3 rounded-lg font-medium hover:bg-gray-900">
+            Sign In
+        </button>
+    </div>
+
+    <!-- ------------------------------------------------------ -->
+    <!-- REGISTER FORM -->
+    <!-- Hidden by default until the Register tab is clicked -->
+    <!-- ------------------------------------------------------ -->
+    <div id="registerForm" class="hidden">
+
+        <label for="regName" class="block mb-2 font-medium">Full Name</label>
+        <input id="regName"
+               type="text"
+               class="w-full p-3 border rounded-lg mb-4"
+               placeholder="John Doe">
+
+        <label for="regEmail" class="block mb-2 font-medium">Email</label>
+        <input id="regEmail"
+               type="email"
+               class="w-full p-3 border rounded-lg mb-4"
+               placeholder="name@example.com">
+
+        <!-- Role dropdown: Student or Employer -->
+        <label for="regRole" class="block mb-2 font-medium">Role</label>
+        <select id="regRole"
+                class="w-full p-3 border rounded-lg mb-4">
+            <option value="">Select role</option>
+            <option value="STUDENT">Student</option>
+            <option value="EMPLOYER">Employer</option>
+        </select>
+
+        <label for="regPassword" class="block mb-2 font-medium">Password</label>
+        <input id="regPassword"
+               type="password"
+               class="w-full p-3 border rounded-lg mb-4"
+               placeholder="••••••••">
+
+        <label for="regConfirmPassword" class="block mb-2 font-medium">Confirm Password</label>
+        <input id="regConfirmPassword"
+               type="password"
+               class="w-full p-3 border rounded-lg mb-6"
+               placeholder="••••••••">
+
+        <!-- Error message for registration -->
+        <p id="regError"
+           class="hidden text-red-600 text-center mb-4 font-medium">
+        </p>
+
+        <!-- Register button triggers register.js -->
+        <button id="registerBtn"
+                class="w-full bg-black text-white py-3 rounded-lg font-medium hover:bg-gray-900">
+            Create Account
+        </button>
+    </div>
+
+</div>
+
+<!-- ------------------------------------------------------ -->
+<!-- JavaScript (login logic, register logic and tab switching) -->
+<!-- ------------------------------------------------------ -->
+<script src="/js/login.js"></script>
+<script src="/js/register.js"></script>
+
+</body>
+</html>
