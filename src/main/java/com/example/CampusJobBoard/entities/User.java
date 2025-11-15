@@ -45,7 +45,7 @@ public class User {
 
     /** Supported user roles. */
     public enum Role {
-        STUDENT, EMPLOYER, ADMIN
+        STUDENT, EMPLOYER, ADMIN, SUPER_ADMIN
     }
 
     /** Possible account statuses. */

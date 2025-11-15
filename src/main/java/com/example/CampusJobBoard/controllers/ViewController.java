@@ -52,4 +52,13 @@ public class ViewController {
     public String adminDash() {
         return "admin/dashboard";
     }
+
+    /**
+     * Super_Admin dashboard.
+     */
+    @GetMapping("/superadmin/dashboard")
+    public String superAdminDash() {
+        return "superadmin/dashboard";
+    }
+
 }
