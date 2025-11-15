@@ -39,6 +39,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
+        //  Skip AUTH endpoints (login, register)
+        String path = request.getServletPath();
+        if (path.startsWith("/api/auth")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
         final String username;
@@ -53,17 +60,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            // --- Extract the role from the JWT ---
+            // Extract role from JWT
             String role = jwtService.extractRole(jwt);
 
-            // Convert role into Spring Security authority format
             List<SimpleGrantedAuthority> authorities =
                     List.of(new SimpleGrantedAuthority("ROLE_" + role));
 
-            // IMPORTANT: Build user WITH authorities
             User tempUser = new User(username, "", authorities);
 
-            // Validate the token using user details that include authorities
             if (jwtService.validateToken(jwt, tempUser)) {
 
                 UsernamePasswordAuthenticationToken authToken =
@@ -73,10 +77,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                                 authorities
                         );
 
-                authToken.setDetails(
-                        new WebAuthenticationDetailsSource().buildDetails(request)
-                );
-
+                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
