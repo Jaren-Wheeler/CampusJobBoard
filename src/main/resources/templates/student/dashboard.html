@@ -30,11 +30,36 @@
                 <td class="px-4 py-2 text-sm text-gray-800">$150,000</td>
                 <td class="px-4 py-2 text-sm text-gray-800">2025-12-01</td>
                 <td>
-                    <button class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">View Job</button>
+                    <button id="job-detail-btn" class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700" onclick="openModal()">View Job</button>
                 </td>
             </tr>
             </tbody>
         </table>
     </div>
+
+     <div id="jobModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center hidden z-50">
+         <div id="modalContent" class="fixed bg-white p-4 w-3/4 h-3/4 flex flex-col">
+             <h1 class="text-center">INSERT TITLE OF JOB HERE</h1>
+             <div class="flex flex-row justify-center gap-4 h-full">
+                 <p>Here is a long description of the job which fits in a character limit.</p>
+                 <table class="w-1/6 divide-y divide-gray-300">
+                     <thead class="bg-gray-100">
+                     <tr>
+                         <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Job Info</th>
+                     </tr>
+                     </thead>
+                     <tbody class="divide-y divide-gray-200">
+                     <tr class="hover:bg-gray-50">
+                         <td class="px-4 py-2 text-sm text-gray-800">Software Engineer</td>
+                     </tr>
+                     </tbody>
+                 </table>
+             </div>
+             <button id="apply-btn" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 w-auto self-end">Apply</button>
+         </div>
+     </div>
+
+    <script src="/js/jobDetails.js"></script>
 </body>
+
 </html>
