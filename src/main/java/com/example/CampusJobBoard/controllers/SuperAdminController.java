@@ -5,6 +5,9 @@ import com.example.CampusJobBoard.services.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import com.example.CampusJobBoard.dto.AdminSummaryResponse;
+import java.util.List;
+
 
 /**
  * Controller for system-level operations available only to SUPER_ADMIN users.
@@ -44,5 +47,37 @@ public class SuperAdminController {
     public ResponseEntity<?> createAdmin(@RequestBody CreateAdminRequest req) {
         userService.createAdmin(req);
         return ResponseEntity.ok("Admin created successfully");
+    }
+
+    /**
+     * Returns a list of all admins (id, name, email).
+     * Used by the Super Admin dashboard table.
+     */
+    @GetMapping("/admins")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    public ResponseEntity<List<AdminSummaryResponse>> getAdmins() {
+        List<AdminSummaryResponse> admins = userService.getAllAdmins();
+        return ResponseEntity.ok(admins);
+    }
+
+    /**
+     * Returns the current number of admin accounts.
+     * Used to display "X / 3 admins used".
+     */
+    @GetMapping("/admin-count")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    public ResponseEntity<Long> getAdminCount() {
+        long count = userService.countAdmins();
+        return ResponseEntity.ok(count);
+    }
+
+    /**
+     * Deletes an admin by id, but only if they actually have the ADMIN role.
+     */
+    @DeleteMapping("/admins/{id}")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    public ResponseEntity<?> deleteAdmin(@PathVariable Long id) {
+        userService.deleteAdminById(id);
+        return ResponseEntity.ok("Admin deleted successfully");
     }
 }

@@ -1,0 +1,21 @@
+<!--
+    Fragment: adminTable
+    Displays the list of existing admin accounts.
+    Populated dynamically by JS after fetching from the backend.
+-->
+<div th:fragment="adminTable">
+
+    <table class="w-full text-left border border-gray-200 mb-8">
+        <thead class="bg-gray-100">
+        <tr>
+            <th class="p-3 border-b">Full Name</th>
+            <th class="p-3 border-b">Email</th>
+            <th class="p-3 border-b w-32">Actions</th>
+        </tr>
+        </thead>
+
+        <!-- Content replaced dynamically in JS using renderAdminTable() -->
+        <tbody id="adminTable"></tbody>
+    </table>
+
+</div>
