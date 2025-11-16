@@ -5,6 +5,10 @@ import com.example.CampusJobBoard.entities.User;
 import com.example.CampusJobBoard.repositories.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import com.example.CampusJobBoard.dto.AdminSummaryResponse;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -18,13 +22,15 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    /**
+     * Creates a new ADMIN account.
+     * Validates email and password.
+     */
     public void createAdmin(CreateAdminRequest req) {
-        // Prevent duplicate admin accounts
         if (userRepository.existsByEmail(req.getEmail())) {
             throw new RuntimeException("Email already exists");
         }
 
-        // Create admin user
         User admin = new User();
         admin.setFullName(req.getFullName());
         admin.setEmail(req.getEmail());
@@ -32,5 +38,41 @@ public class UserService {
         admin.setRole(User.Role.ADMIN);
 
         userRepository.save(admin);
+    }
+
+    /**
+     * Returns a list of all admin accounts.
+     */
+    public List<AdminSummaryResponse> getAllAdmins() {
+        List<User> admins = userRepository.findByRole(User.Role.ADMIN);
+
+        return admins.stream()
+                .map(user -> new AdminSummaryResponse(
+                        user.getUserId(),
+                        user.getFullName(),
+                        user.getEmail()
+                ))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Counts the number of ADMIN accounts.
+     */
+    public long countAdmins() {
+        return userRepository.countByRole(User.Role.ADMIN);
+    }
+
+    /**
+     * Deletes an admin user only if they are actually an ADMIN.
+     */
+    public void deleteAdminById(Long userId) {
+
+        boolean isAdmin = userRepository.existsByUserIdAndRole(userId, User.Role.ADMIN);
+
+        if (!isAdmin) {
+            throw new IllegalArgumentException("User is not an ADMIN or does not exist.");
+        }
+
+        userRepository.deleteById(userId);
     }
 }

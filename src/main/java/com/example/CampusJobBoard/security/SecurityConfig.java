@@ -39,27 +39,28 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
 
                 .authorizeHttpRequests(auth -> auth
-
-                        // PUBLIC frontend routes
+                        // Allow static assets and login page
                         .requestMatchers("/", "/login", "/css/**", "/js/**", "/images/**").permitAll()
 
-                        // UI pages visible to everyone, JS protects them
-                        .requestMatchers("/superadmin/**").permitAll()
-                        .requestMatchers("/admin/**").permitAll()
-                        .requestMatchers("/employer/**").permitAll()
-                        .requestMatchers("/student/**").permitAll()
+                        // Allow all dashboard HTML pages (frontend routing only)
+                        .requestMatchers("/student/dashboard").permitAll()
+                        .requestMatchers("/employer/dashboard").permitAll()
+                        .requestMatchers("/admin/dashboard").permitAll()
+                        .requestMatchers("/superadmin/dashboard").permitAll()
 
-                        // PUBLIC backend auth endpoints
+                        // Auth API
                         .requestMatchers("/api/auth/**").permitAll()
 
-                        // API protected routes
-                        .requestMatchers("/api/superadmin/**").hasRole("SUPER_ADMIN")
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/api/employer/**").hasRole("EMPLOYER")
+                        // Protected APIs
                         .requestMatchers("/api/student/**").hasRole("STUDENT")
+                        .requestMatchers("/api/employer/**").hasRole("EMPLOYER")
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/superadmin/**").hasRole("SUPER_ADMIN")
 
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll() // optional: kill all backend blocking
                 )
+
+
 
                 // API is stateless
                 .sessionManagement(sm ->
