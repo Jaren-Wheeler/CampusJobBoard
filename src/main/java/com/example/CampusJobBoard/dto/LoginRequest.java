@@ -13,12 +13,13 @@ import jakarta.validation.constraints.NotBlank;
  */
 public class LoginRequest {
 
-    /** User’s email address, validated for proper format */
-    @Email
+    /** User’s email address, validated for presence and format */
+    @NotBlank(message = "Email is required")
+    @Email(message = "Email must be valid")
     private String email;
 
     /** User’s password, required for authentication */
-    @NotBlank
+    @NotBlank(message = "Password is required")
     private String password;
 
     public String getEmail() { return email; }

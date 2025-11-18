@@ -6,6 +6,8 @@ import com.example.CampusJobBoard.repositories.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.example.CampusJobBoard.dto.AdminSummaryResponse;
+import com.example.CampusJobBoard.dto.UpdateSuperAdminRequest;
+
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,12 +26,23 @@ public class UserService {
 
     /**
      * Creates a new ADMIN account.
-     * Validates email and password.
+     * Performs business-rule validation such as admin limit and duplicate email.
      */
     public void createAdmin(CreateAdminRequest req) {
-        if (userRepository.existsByEmail(req.getEmail())) {
-            throw new RuntimeException("Email already exists");
+
+        // --- BUSINESS RULE CHECKS --------------------------------------
+
+        // Limit: Only 3 admins allowed
+        if (countAdmins() >= 3) {
+            throw new IllegalStateException("Cannot exceed 3 admin accounts.");
         }
+
+        // Duplicate email check
+        if (userRepository.existsByEmail(req.getEmail())) {
+            throw new IllegalStateException("Email is already in use.");
+        }
+
+        // --- CREATE NEW ADMIN USER -------------------------------------
 
         User admin = new User();
         admin.setFullName(req.getFullName());
@@ -74,5 +87,38 @@ public class UserService {
         }
 
         userRepository.deleteById(userId);
+    }
+
+    /**
+     * Updates the currently logged in SUPER_ADMIN's profile.
+     * Allows changing: fullName, email, and password.
+     *
+     * @param currentEmail The email of the logged-in super admin (from Authentication)
+     * @param request DTO containing updated profile fields
+     */
+    public void updateSuperAdminProfile(String currentEmail, UpdateSuperAdminRequest request) {
+
+        // Find the current super admin user
+        User superAdmin = userRepository.findByEmail(currentEmail)
+                .orElseThrow(() -> new IllegalStateException("Super Admin not found."));
+
+        // Handle email change — prevent duplicates
+        if (!superAdmin.getEmail().equals(request.getEmail())) {
+            if (userRepository.existsByEmail(request.getEmail())) {
+                throw new IllegalStateException("Email is already in use.");
+            }
+            superAdmin.setEmail(request.getEmail());
+        }
+
+        // Update name
+        superAdmin.setFullName(request.getFullName());
+
+        // 4. Update password only if the user typed a new one
+        if (request.getPassword() != null && !request.getPassword().isBlank()) {
+            superAdmin.setPassword(passwordEncoder.encode(request.getPassword()));
+        }
+
+        // Save changes
+        userRepository.save(superAdmin);
     }
 }

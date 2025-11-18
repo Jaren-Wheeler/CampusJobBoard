@@ -5,26 +5,28 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 /**
- * DTO used when a SUPER_ADMIN creates a new ADMIN account.
- * Includes field-level validation to ensure predictable and safe inputs.
+ * DTO used when the SUPER_ADMIN updates their own account profile.
+ * Allows updating:
+ *  - fullName
+ *  - email
+ *  - password
+ *
+ * Validation ensures that incoming data is well-formed before reaching the service layer.
  */
-public class CreateAdminRequest {
+public class UpdateSuperAdminRequest {
 
-    /** The full name of the new admin being created. */
+    /** Updated full name for the Super Admin */
     @NotBlank(message = "Full name is required")
     private String fullName;
 
-    /** The email address the new admin will use to log in. */
+    /** Updated email address */
     @NotBlank(message = "Email is required")
     @Email(message = "Email must be valid")
     private String email;
 
-    /** The raw password provided during admin creation. */
-    @NotBlank(message = "Password is required")
-    @Size(min = 8, message = "Password must be at least 8 characters long")
+    /** New password (optional but must meet minimum length if provided) */
+    @Size(min = 8, message = "Password must be at least 8 characters")
     private String password;
-
-    // Getters and Setters
 
     public String getFullName() {
         return fullName;
