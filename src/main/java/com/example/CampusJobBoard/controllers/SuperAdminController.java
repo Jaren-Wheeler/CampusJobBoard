@@ -1,5 +1,6 @@
 package com.example.CampusJobBoard.controllers;
 
+import org.springframework.security.core.Authentication;
 import com.example.CampusJobBoard.dto.CreateAdminRequest;
 import com.example.CampusJobBoard.services.UserService;
 import org.springframework.http.ResponseEntity;
@@ -7,6 +8,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import com.example.CampusJobBoard.dto.AdminSummaryResponse;
 import java.util.List;
+import jakarta.validation.Valid;
+import org.springframework.validation.BindingResult;
+import java.util.HashMap;
+import java.util.Map;
+import com.example.CampusJobBoard.dto.UpdateSuperAdminRequest;
+
+
 
 
 /**
@@ -44,10 +52,33 @@ public class SuperAdminController {
      */
     @PostMapping("/create-admin")
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<?> createAdmin(@RequestBody CreateAdminRequest req) {
-        userService.createAdmin(req);
-        return ResponseEntity.ok("Admin created successfully");
+    public ResponseEntity<?> createAdmin(
+            @Valid @RequestBody CreateAdminRequest req,
+            BindingResult result) {
+
+        // Handle validation errors (field-level)
+        if (result.hasErrors()) {
+            Map<String, String> errors = new HashMap<>();
+
+            result.getFieldErrors().forEach(error ->
+                    errors.put(error.getField(), error.getDefaultMessage())
+            );
+
+            return ResponseEntity.badRequest().body(errors);
+        }
+
+        // Service-level validation (business rules)
+        try {
+            userService.createAdmin(req);
+            return ResponseEntity.ok("Admin created successfully.");
+        } catch (IllegalStateException ex) {
+            // Examples:
+            // "email already exists"
+            // "Cannot exceed 3 admins"
+            return ResponseEntity.badRequest().body(Map.of("error", ex.getMessage()));
+        }
     }
+
 
     /**
      * Returns a list of all admins (id, name, email).
@@ -79,5 +110,34 @@ public class SuperAdminController {
     public ResponseEntity<?> deleteAdmin(@PathVariable Long id) {
         userService.deleteAdminById(id);
         return ResponseEntity.ok("Admin deleted successfully");
+    }
+
+    /**
+     * Allows the SUPER_ADMIN to update their own profile details.
+     * This includes fullName, email, and password.
+     */
+    @PutMapping("/update-profile")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    public ResponseEntity<?> updateSuperAdminProfile(
+            @Valid @RequestBody UpdateSuperAdminRequest request,
+            BindingResult result,
+            Authentication authentication) {
+
+        // Handle validation errors
+        if (result.hasErrors()) {
+            Map<String, String> errors = new HashMap<>();
+            result.getFieldErrors().forEach(err ->
+                    errors.put(err.getField(), err.getDefaultMessage())
+            );
+            return ResponseEntity.badRequest().body(errors);
+        }
+
+        try {
+            // authentication.getName() gives the logged-in user's email
+            userService.updateSuperAdminProfile(authentication.getName(), request);
+            return ResponseEntity.ok("Profile updated successfully.");
+        } catch (IllegalStateException ex) {
+            return ResponseEntity.badRequest().body(Map.of("error", ex.getMessage()));
+        }
     }
 }
