@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Super Admin Dashboard</title>
+
+    <th:block th:with="pageTitle='Super Admin Dashboard'"
+              th:replace="fragments/_shared/head :: head"></th:block>
+</head>
+
+
+<body class="bg-gray-100 min-h-screen flex justify-center items-center">
+
+<div class="bg-white w-full max-w-4xl rounded-xl shadow-lg p-10">
+
+    <!-- Page Header -->
+    <h1 class="text-3xl font-semibold text-[#2A3810] mb-2">
+        CampusHire Super Admin
+    </h1>
+    <p class="text-gray-500 mb-8">
+        System control panel.
+    </p>
+
+    <!-- Header bar fragment: admin count, logout, new admin button -->
+    <div th:replace="fragments/superadmin/header-bar :: headerBar"></div>
+
+    <!-- Admin list table -->
+    <div th:replace="fragments/superadmin/admin-table :: adminTable"></div>
+
+    <!-- Create Admin form panel -->
+    <div th:replace="fragments/superadmin/admin-create-panel :: createAdminPanel"></div>
+
+</div>
+
+<!-- Main JS entry point for the Super Admin dashboard -->
+<script type="module" th:src="@{/js/superadmin/superadmin.js}"></script>
+
+</body>
+</html>

@@ -33,21 +33,26 @@ public class AuthService {
      */
     public AuthResponse register(RegisterRequest request) {
 
-        // Prevent duplicate accounts
+        // Duplicate email
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new RuntimeException("Email already registered");
+            throw new IllegalStateException("Email is already registered.");
         }
 
-        // Prevent users from self-registering as ADMIN
         if (request.getRole() == null) {
-            throw new RuntimeException("Role is required");
+            throw new IllegalStateException("Role is required.");
         }
 
+        // Prevent self-registering as admin
         if (request.getRole() == User.Role.ADMIN) {
-            throw new RuntimeException("Cannot self-register as admin");
+
+            if (userRepository.countByRole(User.Role.ADMIN) >= 3) {
+                throw new IllegalStateException("Maximum of 3 admin accounts allowed.");
+            }
+
+            throw new IllegalStateException("Cannot self-register as admin.");
         }
 
-        // Create new user
+        // Create user
         User newUser = new User();
         newUser.setFullName(request.getFullName());
         newUser.setEmail(request.getEmail());
@@ -56,40 +61,38 @@ public class AuthService {
 
         userRepository.save(newUser);
 
-        String jwtToken = jwtService.generateToken(
-                new org.springframework.security.core.userdetails.User(
-                        newUser.getEmail(),
-                        newUser.getPassword(),
-                        java.util.List.of()
-                )
-        );
+        // Build token
+        UserDetails details = org.springframework.security.core.userdetails.User
+                .withUsername(newUser.getEmail())
+                .password(newUser.getPassword())
+                .roles(newUser.getRole().name())
+                .build();
 
-        return new AuthResponse(jwtToken, newUser.getRole().name());
+        String jwt = jwtService.generateToken(details);
+
+        return new AuthResponse(jwt, newUser.getRole().name());
     }
-
 
     /**
      * Authenticates an existing user and returns a signed JWT token.
      */
     public AuthResponse login(LoginRequest request) {
+
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new IllegalStateException("Invalid credentials"));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Invalid credentials");
+            throw new IllegalStateException("Invalid credentials");
         }
 
-        // Build UserDetails for token generation
-        UserDetails userDetails = org.springframework.security.core.userdetails.User
+        UserDetails details = org.springframework.security.core.userdetails.User
                 .withUsername(user.getEmail())
                 .password(user.getPassword())
                 .roles(user.getRole().name())
                 .build();
 
-        // Generate JWT for login
-        String jwtToken = jwtService.generateToken(userDetails);
+        String jwt = jwtService.generateToken(details);
 
-        // Return the token and role
-        return new AuthResponse(jwtToken, user.getRole().toString());
+        return new AuthResponse(jwt, user.getRole().name());
     }
 }

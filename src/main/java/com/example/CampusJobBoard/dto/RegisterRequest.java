@@ -3,6 +3,7 @@ package com.example.CampusJobBoard.dto;
 import com.example.CampusJobBoard.entities.User.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 /**
  * RegisterRequest is a Data Transfer Object used when a new user signs up for an account.
@@ -11,23 +12,26 @@ import jakarta.validation.constraints.NotBlank;
  * - Email
  * - Password
  * - Role (STUDENT, EMPLOYER, or ADMIN)
- * Validation annotations ensure all essential fields are provided and formatted correctly before creating a new user record.
+ * Validation annotations ensure all essential fields are provided and formatted correctly
+ * before creating a new user record.
  */
 public class RegisterRequest {
 
     /** User’s full name, required during registration */
-    @NotBlank
+    @NotBlank(message = "Full name is required")
     private String fullName;
 
     /** User’s email address, must follow valid format */
-    @Email
+    @NotBlank(message = "Email is required")
+    @Email(message = "Email must be valid")
     private String email;
 
-    /** Account password, cannot be blank */
-    @NotBlank
+    /** Account password, cannot be blank and must meet security minimums */
+    @NotBlank(message = "Password is required")
+    @Size(min = 8, message = "Password must be at least 8 characters long")
     private String password;
 
-    /** Role assigned at registration (Student/Employer) */
+    /** Role assigned at registration (STUDENT or EMPLOYER) */
     private Role role;
 
     public String getFullName() { return fullName; }

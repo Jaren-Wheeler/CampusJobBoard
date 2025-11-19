@@ -33,37 +33,40 @@ public class SecurityConfig {
         this.jwtAuthFilter = jwtAuthFilter;
     }
 
-    /**
-     * Defines security rules and integrates the JwtAuthFilter so that
-     * tokens are validated before any controller logic executes.
-     */
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
 
                 .authorizeHttpRequests(auth -> auth
-
-                        // Frontend pages must be PUBLIC
+                        // Allow static assets and login page
                         .requestMatchers("/", "/login", "/css/**", "/js/**", "/images/**").permitAll()
-                        .requestMatchers("/student/**", "/employer/**", "/admin/**").permitAll()
 
-                        // Backend API auth endpoints
+                        // Allow all dashboard HTML pages (frontend routing only)
+                        .requestMatchers("/student/dashboard").permitAll()
+                        .requestMatchers("/employer/dashboard").permitAll()
+                        .requestMatchers("/admin/dashboard").permitAll()
+                        .requestMatchers("/superadmin/dashboard").permitAll()
+
+                        // Auth API
                         .requestMatchers("/api/auth/**").permitAll()
 
-                        // Protected backend API routes (DATA + ACTIONS)
-                        .requestMatchers("/api/student/**").hasAuthority("STUDENT")
-                        .requestMatchers("/api/employer/**").hasAuthority("EMPLOYER")
-                        .requestMatchers("/api/admin/**").hasAuthority("ADMIN")
+                        // Protected APIs
+                        .requestMatchers("/api/student/**").hasRole("STUDENT")
+                        .requestMatchers("/api/employer/**").hasRole("EMPLOYER")
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/superadmin/**").hasRole("SUPER_ADMIN")
 
-                        // Everything else requires authentication
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll() // optional: kill all backend blocking
                 )
 
+
+
+                // API is stateless
                 .sessionManagement(sm ->
                         sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
+                // JWT before Spring Security checks
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
 
                 .formLogin(AbstractHttpConfigurer::disable)
@@ -73,19 +76,11 @@ public class SecurityConfig {
     }
 
 
-    /**
-     * Provides a BCryptPasswordEncoder bean for hashing passwords
-     * during user registration and authentication.
-     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    /**
-     * Exposes the AuthenticationManager to support authentication
-     * in the AuthService.
-     */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration cfg) throws Exception {
         return cfg.getAuthenticationManager();
