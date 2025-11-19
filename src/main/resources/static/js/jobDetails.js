@@ -4,4 +4,7 @@ function openModal(id) {
     modal.classList.remove("hidden");
 }
 
-console.log("File is loaded");
+function closeModal() {
+    let modal = document.getElementById("jobModal");
+    modal.classList.add("hidden");
+}
