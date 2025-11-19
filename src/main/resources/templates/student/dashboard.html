@@ -75,9 +75,25 @@
                      </tbody>
                  </table>
              </div>
-             <button id="apply-btn" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 w-auto self-end">Apply</button>
+             <button id="apply-btn" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 w-auto self-end" onclick="openApplyModal()">Apply</button>
          </div>
      </div>
+
+    <div id="applyModal" class="fixed inset-0 flex justify-center items-center hidden z-50">
+        <div id="applyModalContent" class="bg-white p-4 w-1/2 h-3/4 flex flex-col items-center overflow-hidden rounded">
+
+            <button class="justify-center self-end" onclick="closeApplyModal()">x</button>
+
+            <h1 class="text-center m-4 text-lg font-bold">Create Job Application</h1>
+            <div class="flex flex-row gap-4 w-full h-full m-4 justify-content flex-1 overflow-hidden">
+
+            </div>
+            <div class="self-end mt-auto flex gap-2">
+                <button class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-grey-700 w-auto" onclick="returnToDetails()">Back</button>
+                <button id="submit-app-btn" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 w-auto">Submit</button>
+            </div>
+        </div>
+    </div>
 
     <script src="/js/jobDetails.js"></script>
 </body>
