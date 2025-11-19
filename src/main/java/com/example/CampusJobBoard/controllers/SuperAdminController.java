@@ -14,9 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 import com.example.CampusJobBoard.dto.UpdateSuperAdminRequest;
 
-
-
-
 /**
  * Controller for system-level operations available only to SUPER_ADMIN users.
  *
@@ -56,7 +53,6 @@ public class SuperAdminController {
             @Valid @RequestBody CreateAdminRequest req,
             BindingResult result) {
 
-        // Handle validation errors (field-level)
         if (result.hasErrors()) {
             Map<String, String> errors = new HashMap<>();
 
@@ -67,14 +63,11 @@ public class SuperAdminController {
             return ResponseEntity.badRequest().body(errors);
         }
 
-        // Service-level validation (business rules)
         try {
             userService.createAdmin(req);
             return ResponseEntity.ok("Admin created successfully.");
         } catch (IllegalStateException ex) {
-            // Examples:
-            // "email already exists"
-            // "Cannot exceed 3 admins"
+
             return ResponseEntity.badRequest().body(Map.of("error", ex.getMessage()));
         }
     }
@@ -113,6 +106,18 @@ public class SuperAdminController {
     }
 
     /**
+     * Returns the profile info of the logged-in SUPER_ADMIN.
+     * Used to fill the setup page on first login.
+     */
+    @GetMapping("/profile")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    public ResponseEntity<?> getSuperAdminProfile(Authentication authentication) {
+        return ResponseEntity.ok(
+                userService.getSuperAdminProfile(authentication.getName())
+        );
+    }
+
+    /**
      * Allows the SUPER_ADMIN to update their own profile details.
      * This includes fullName, email, and password.
      */
@@ -123,7 +128,6 @@ public class SuperAdminController {
             BindingResult result,
             Authentication authentication) {
 
-        // Handle validation errors
         if (result.hasErrors()) {
             Map<String, String> errors = new HashMap<>();
             result.getFieldErrors().forEach(err ->

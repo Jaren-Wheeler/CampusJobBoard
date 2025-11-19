@@ -29,7 +29,6 @@ public class AuthService {
 
     /**
      * Registers a new user (STUDENT or EMPLOYER) and returns a signed JWT token.
-     * Admin accounts cannot self-register.
      */
     public AuthResponse register(RegisterRequest request) {
 
@@ -59,6 +58,9 @@ public class AuthService {
         newUser.setPassword(passwordEncoder.encode(request.getPassword()));
         newUser.setRole(request.getRole());
 
+        // New users do NOT need first-time setup
+        newUser.setMustUpdateProfile(false);
+
         userRepository.save(newUser);
 
         // Build token
@@ -70,7 +72,7 @@ public class AuthService {
 
         String jwt = jwtService.generateToken(details);
 
-        return new AuthResponse(jwt, newUser.getRole().name());
+        return new AuthResponse(jwt, newUser.getRole().name(), newUser.isMustUpdateProfile());
     }
 
     /**
@@ -93,6 +95,6 @@ public class AuthService {
 
         String jwt = jwtService.generateToken(details);
 
-        return new AuthResponse(jwt, user.getRole().name());
+        return new AuthResponse(jwt, user.getRole().name(), user.isMustUpdateProfile());
     }
 }

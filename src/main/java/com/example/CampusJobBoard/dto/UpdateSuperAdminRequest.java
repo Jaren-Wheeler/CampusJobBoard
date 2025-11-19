@@ -2,53 +2,39 @@ package com.example.CampusJobBoard.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 
 /**
- * DTO used when the SUPER_ADMIN updates their own account profile.
- * Allows updating:
- *  - fullName
- *  - email
- *  - password
- *
- * Validation ensures that incoming data is well-formed before reaching the service layer.
+ * DTO used when the SUPER_ADMIN completes their required
+ * first-time account setup or updates their profile information.
+ * All fields are mandatory during the initial setup:
+ *  - fullName    → The system owner's real display name
+ *  - email       → Must replace the temporary default email
+ *  - password    → Must replace the default system password
  */
 public class UpdateSuperAdminRequest {
 
-    /** Updated full name for the Super Admin */
+    /** The updated full name of the Super Admin. */
     @NotBlank(message = "Full name is required")
     private String fullName;
 
-    /** Updated email address */
+    /** New email address for the Super Admin. */
     @NotBlank(message = "Email is required")
     @Email(message = "Email must be valid")
     private String email;
 
-    /** New password (optional but must meet minimum length if provided) */
-    @Size(min = 8, message = "Password must be at least 8 characters")
+    /**
+     * New password chosen by the Super Admin.
+     */
+    @NotBlank(message = "Password is required")
     private String password;
 
-    public String getFullName() {
-        return fullName;
-    }
+    // Getters + setters
+    public String getFullName() { return fullName; }
+    public void setFullName(String fullName) { this.fullName = fullName; }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
 }

@@ -1,42 +1,166 @@
-import { deleteAdminRequest } from "./index.js";
+import {
+    validateFullName,
+    validateEmail,
+    validatePassword
+} from "../_shared/validation.js";
+
+import {
+    createAdmin,
+    deleteAdmin
+} from "./admin-api.js";
+
+import { showMessage } from "./admin-ui.js";
+
 
 /**
- * Attaches click handlers to all Delete Admin buttons in the UI.
- * Ensures handlers are not duplicated after a table reload by cloning
- * each button before binding its event listener.
+ * Handles clicking the Delete button for any admin.
  *
- * @param {string} token - JWT for authentication.
- * @param {Function} reloadCallback - Function to refresh the admin list after deletion.
+ * Uses event delegation so it continues working
+ * even after the table is re-rendered.
+ *
+ * After delete:
+ *   - refreshes the table
+ *   - shows a small success/error message
  */
-export function attachDeleteAdminHandlers(token, reloadCallback) {
+export function attachDeleteAdminHandlers(reloadCallback) {
 
-    if (typeof reloadCallback !== "function") {
-        console.error("reloadCallback must be a function");
-        return;
-    }
+    document.addEventListener("click", async (e) => {
 
-    const buttons = document.querySelectorAll(".deleteAdminBtn");
+        if (!e.target.classList.contains("deleteAdminBtn")) return;
 
-    buttons.forEach(btn => {
+        const id = e.target.dataset.id;
 
-        // Replace button with a cloned version to remove any old listeners
-        // This prevents stacking multiple click handlers after each reload.
-        const newBtn = btn.cloneNode(true);
-        btn.replaceWith(newBtn);
+        if (!confirm("Delete this admin?")) return;
 
-        newBtn.addEventListener("click", async () => {
-            const id = newBtn.dataset.id;
+        const res = await deleteAdmin(id);
 
-            if (!confirm("Are you sure you want to delete this admin?")) return;
+        if (!res.ok) {
+            showMessage("Failed to delete admin.", "error");
+            return;
+        }
 
-            const res = await deleteAdminRequest(id, token);
+        await reloadCallback();
+        showMessage("Admin deleted successfully.", "success");
+    });
+}
 
-            if (!res.ok) {
-                alert("Failed to delete admin.");
-                return;
-            }
 
-            await reloadCallback();
+/**
+ * Handles creating a new admin from within the slide-down form.
+ *
+ * Steps:
+ *   1. Clear any old validation messages
+ *   2. Validate all fields on the client
+ *   3. Submit to the backend
+ *   4. Re-render the table
+ *   5. Show a success or error message based on the result
+ */
+export function attachCreateAdminHandler(reloadCallback) {
+
+    const btn = document.getElementById("saCreateAdminBtn");
+    if (!btn) return;
+
+    btn.addEventListener("click", async () => {
+
+        ["errSaName", "errSaEmail", "errSaPassword"].forEach(id => {
+            const el = document.getElementById(id);
+            el.textContent = "";
+            el.classList.add("hidden");
         });
+
+        const fullName = document.getElementById("saName").value.trim();
+        const email = document.getElementById("saEmail").value.trim();
+        const password = document.getElementById("saPassword").value.trim();
+
+        let hasError = false;
+
+        const nameErr = validateFullName(fullName);
+        if (nameErr) {
+            const el = document.getElementById("errSaName");
+            el.textContent = nameErr;
+            el.classList.remove("hidden");
+            hasError = true;
+        }
+
+        const emailErr = validateEmail(email);
+        if (emailErr) {
+            const el = document.getElementById("errSaEmail");
+            el.textContent = emailErr;
+            el.classList.remove("hidden");
+            hasError = true;
+        }
+
+        const pwErr = validatePassword(password);
+        if (pwErr) {
+            const el = document.getElementById("errSaPassword");
+            el.textContent = pwErr;
+            el.classList.remove("hidden");
+            hasError = true;
+        }
+
+        if (hasError) return;
+
+        const res = await createAdmin({ fullName, email, password });
+
+        if (!res.ok) {
+            const backendErr = await res.json();
+            showMessage(backendErr.error || "Failed to create admin.", "error");
+            return;
+        }
+
+        await reloadCallback();
+        showMessage("Admin created successfully!", "success");
+    });
+}
+
+
+/**
+ * Opens or closes the Create Admin panel.
+ *
+ * The panel stays entirely controlled through JS,
+ * so this makes the UI feel responsive without page reloads.
+ */
+export function attachCreateAdminPanelToggle() {
+    const openBtn = document.getElementById("openCreateAdmin");
+    const cancelBtn = document.getElementById("cancelCreateAdmin");
+    const panel = document.getElementById("createAdminPanelWrapper");
+
+    if (!openBtn || !cancelBtn || !panel) return;
+
+    openBtn.addEventListener("click", () => {
+        panel.classList.remove("hidden");
+        showMessage(""); // Clear messages when opening
+    });
+
+    cancelBtn.addEventListener("click", () => {
+        panel.classList.add("hidden");
+        showMessage(""); // Clear messages on close
+    });
+}
+
+
+/**
+ * Logs out the current user.
+ *
+ * Clears sessionStorage and shows a small confirmation
+ * before redirecting back to the login page.
+ */
+export function attachLogoutHandler() {
+    const btn = document.getElementById("logoutBtn");
+    const msg = document.getElementById("logoutMessage");
+
+    if (!btn) return;
+
+    btn.addEventListener("click", () => {
+        sessionStorage.clear();
+
+        if (msg) {
+            msg.classList.remove("hidden");
+            msg.textContent = "Logging out...";
+        }
+
+        setTimeout(() => {
+            window.location.href = "/login";
+        }, 350);
     });
 }

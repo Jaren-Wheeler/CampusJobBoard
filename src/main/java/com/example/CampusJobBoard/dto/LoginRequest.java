@@ -4,7 +4,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
 /**
- * LoginRequest is a Data Transfer Object that captures user credentials during login.
+ * DTO that captures user credentials during login.
  * Includes:
  * - Email
  * - Password
