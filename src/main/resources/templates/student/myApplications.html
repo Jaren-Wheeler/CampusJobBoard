@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+    <body>
+
+        <div class="w-3/4 mx-auto flex justify-between items-center mt-4">
+            <h1 class="text-xl font-semibold">Welcome, Student</h1>
+            <div class="flex gap-4">
+                <a th:href="@{/student/dashboard}">
+                    <button class="px-4 py-2 bg-gray-200 text-gray-900 rounded hover:bg-gray-300">
+                        Dashboard
+                    </button>
+                </a>
+                <a th:href="@{/login}">
+                    <button class="px-4 py-2 bg-black text-white rounded hover:bg-red-600">
+                        Logout
+                    </button>
+                </a>
+            </div>
+
+        </div>
+        <div class="w-3/4 mx-auto">
+            <h2 class="text-center">Your Applications</h2>
+            <table class="w-full divide-y divide-gray-300">
+                <thead class="bg-gray-100">
+                <tr>
+                    <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Job Title</th>
+                    <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Employer</th>
+                    <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Application ID</th>
+                    <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Application Submission Date</th>
+                    <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Status</th>
+                </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                <tr class="hover:bg-gray-50">
+                    <td class="px-4 py-2 text-sm text-gray-800">Software Engineer</td>
+                    <td class="px-4 py-2 text-sm text-gray-800">Google</td>
+                    <td class="px-4 py-2 text-sm text-gray-800">1</td>
+                    <td class="px-4 py-2 text-sm text-gray-800">2025-11-19</td>
+                    <td class="px-4 py-2 text-sm text-gray-800">SUBMITTED</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </body>
+</html>

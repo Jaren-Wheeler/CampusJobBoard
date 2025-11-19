@@ -37,6 +37,11 @@ public class ViewController {
         return "student/dashboard";
     }
 
+    @GetMapping("/student/myApplications")
+    public String studentMyApplications() {
+        return "student/myApplications";
+    }
+
     /**
      * Employer dashboard.
      */

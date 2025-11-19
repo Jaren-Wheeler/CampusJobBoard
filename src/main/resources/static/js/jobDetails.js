@@ -11,21 +11,8 @@ function closeModal() {
     modal.classList.add("hidden");
 }
 
-// opens the modal to create a job application
-function openApplyModal() {
-    let applyModal = document.getElementById("applyModal");
-    applyModal.classList.remove("hidden");
-}
 
-// closes both modals at one (create application and details)
-function closeApplyModal() {
-    let applyModal = document.getElementById("applyModal");
-    applyModal.classList.add("hidden");
-    closeModal();
-}
+// confirmation of application
+function applicationSubmit() {
 
-// go back to details window from apply window
-function returnToDetails() {
-    let applyModal = document.getElementById("applyModal");
-    applyModal.classList.add("hidden");
 }
