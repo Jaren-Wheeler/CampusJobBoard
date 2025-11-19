@@ -5,9 +5,6 @@
  *  - API request helpers
  *  - UI rendering methods
  *  - event handler bindings
- *
- * Any file within the superadmin/ folder can import from this
- * module instead of referencing individual files.
  */
 
 export * from "./access-control.js";

@@ -1,102 +1,85 @@
 /**
- * Renders the admin table content based on the provided admin list.
- * Handles empty states and builds rows dynamically, including delete buttons.
+ * Renders the list of admin accounts in the table.
  *
- * @param {Array} admins - List of admin objects to display.
+ * This:
+ *   - clears any previous rows
+ *   - shows the “empty” message if no admins exist
+ *   - injects each admin as a row with a delete button
  */
 export function renderAdminTable(admins) {
-    const table = document.getElementById("adminTable");
-    if (!table) return;
+    const tbody = document.getElementById("adminTable");
+    const emptyMsg = document.getElementById("adminEmpty");
 
-    if (!admins || admins.length === 0) {
-        table.innerHTML = `
-            <tr>
-                <td colspan="3" class="p-3 text-gray-500 italic">
-                    No admin accounts created yet.
-                </td>
-            </tr>`;
+    if (!tbody) {
+        console.warn("renderAdminTable: #adminTable not found");
         return;
     }
 
-    table.innerHTML = admins
-        .map(admin => `
-            <tr class="border-b">
-                <td class="p-3">${admin.fullName}</td>
-                <td class="p-3">${admin.email}</td>
-                <td class="p-3">
-                    <button
-                        class="deleteAdminBtn text-red-600 hover:underline"
-                        data-id="${admin.id}">
-                        Delete
-                    </button>
-                </td>
-            </tr>
-        `)
-        .join("");
+    tbody.innerHTML = "";
+
+    if (!admins || admins.length === 0) {
+        emptyMsg?.classList.remove("hidden");
+        return;
+    }
+
+    emptyMsg?.classList.add("hidden");
+
+    admins.forEach(admin => {
+        const tr = document.createElement("tr");
+
+        tr.innerHTML = `
+            <td class="px-4 py-2 border-b">${admin.fullName}</td>
+            <td class="px-4 py-2 border-b">${admin.email}</td>
+            <td class="px-4 py-2 border-b text-right">
+                <button
+                    class="deleteAdminBtn text-red-600 hover:underline"
+                    data-id="${admin.userId}">
+                    Delete
+                </button>
+            </td>
+        `;
+
+        tbody.appendChild(tr);
+    });
 }
 
 
 /**
- * Updates the "Admins: X / 3" counter in the header.
- *
- * @param {number} count - Current number of admins.
- * @param {number} max - Maximum allowed admins.
+ * Updates the “Admins: X / 3” text shown in the header bar.
+ * Called every time the list is reloaded so the count is always accurate.
  */
-export function setAdminCount(count, max) {
+export function updateAdminCount(admins) {
     const el = document.getElementById("adminCount");
-    if (el) el.textContent = `Admins: ${count} / ${max}`;
+    if (!el) return;
+
+    const count = admins?.length ?? 0;
+    const max = 3; // System limit for admins
+
+    el.textContent = `Admins: ${count} / ${max}`;
 }
 
-
 /**
- * Displays the "Create Admin" panel.
- */
-export function showCreatePanel() {
-    document.getElementById("createAdminPanelWrapper")
-        .classList.remove("hidden");
-}
-
-
-/**
- * Hides the "Create Admin" panel and resets all form fields and messages.
- */
-export function hideCreatePanel() {
-    const wrapper = document.getElementById("createAdminPanelWrapper");
-    wrapper.classList.add("hidden");
-
-    document.getElementById("saName").value = "";
-    document.getElementById("saEmail").value = "";
-    document.getElementById("saPassword").value = "";
-
-    const msg = document.getElementById("saMessage");
-    msg.classList.add("hidden");
-    msg.textContent = "";
-}
-
-
-/**
- * Clears only the input fields in the Create Admin form.
- * Used after successful creation to keep the panel open.
- */
-export function clearCreateAdminFields() {
-    document.getElementById("saName").value = "";
-    document.getElementById("saEmail").value = "";
-    document.getElementById("saPassword").value = "";
-}
-
-
-/**
- * Displays a feedback message inside the Create Admin panel.
- *
- * @param {string} text - Message to show.
- * @param {"success"|"error"} [type="success"] - Determines text color.
+ * Shows a temporary success/error message inside the Create Admin panel.
+ * The element already exists this just toggles visibility
+ * and applies the appropriate color.
  */
 export function showMessage(text, type = "success") {
-    const msg = document.getElementById("saMessage");
+    const el = document.getElementById("saMessage");
+    if (!el) return;
 
-    msg.textContent = text;
-    msg.classList.remove("hidden");
+    el.classList.remove("hidden", "text-red-600", "text-green-600");
 
-    msg.classList.toggle("text-green-600", type === "success");
-    msg.classList.toggle("text-red-600", type === "error");
+    if (!text) {
+        el.textContent = "";
+        el.classList.add("hidden");
+        return;
+    }
+
+    el.textContent = text;
+
+    if (type === "error") {
+        el.classList.add("text-red-600");
+    } else {
+        el.classList.add("text-green-600");
+    }
 }

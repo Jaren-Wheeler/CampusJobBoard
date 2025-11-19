@@ -1,68 +1,52 @@
-/**
- * Fetches the full list of admin accounts.
- *
- * @param {string} token - JWT for authentication.
- * @returns {Promise<Array>} list of admin objects.
- * @throws {Error} if the request fails.
- */
-export async function fetchAdminList(token) {
-    const res = await fetch("/api/superadmin/admins", {
-        headers: { "Authorization": `Bearer ${token}` }
-    });
+import { authFetch } from "../_shared/index.js";
 
-    if (!res.ok) throw new Error("Failed to fetch admin list");
-    return await res.json();
+const BASE = "/api/superadmin";
+
+
+/**
+ * Fetches the full list of admins for the dashboard.
+ *
+ * Uses authFetch so the JWT is included automatically.
+ * Returns an empty array if something goes wrong so the UI
+ * never breaks while rendering.
+ */
+export async function fetchAdmins() {
+    const res = await authFetch(`${BASE}/admins`, { method: "GET" });
+
+    if (!res.ok) {
+        console.error("Failed to load admins");
+        return [];
+    }
+
+    return res.json();
 }
 
-
 /**
- * Gets the current number of admins in the system.
- * Helps with enforcing max-admin limits on the dashboard.
+ * Sends a request to create a new admin.
  *
- * @param {string} token - JWT for authentication.
- * @returns {Promise<number>} the current admin count.
- * @throws {Error} if the request fails.
+ * The controller handles validation and role assignment.
+ * This returns the raw Response object so the caller can
+ * check 'res.ok' and show messages accordingly.
  */
-export async function fetchAdminCount(token) {
-    const res = await fetch("/api/superadmin/admin-count", {
-        headers: { "Authorization": `Bearer ${token}` }
-    });
-
-    if (!res.ok) throw new Error("Failed to fetch admin count");
-    return await res.json();
-}
-
-
-/**
- * Sends a request to create a new admin account.
- * Backend handles validation and role assignment.
- *
- * @param {Object} data - { fullName, email, password }.
- * @param {string} token - JWT for authentication.
- * @returns {Promise<Response>} the raw fetch response.
- */
-export async function createAdmin(data, token) {
-    return await fetch("/api/superadmin/create-admin", {
+export async function createAdmin(adminData) {
+    return authFetch(`${BASE}/create-admin`, {
         method: "POST",
-        headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
+        body: JSON.stringify(adminData)
     });
 }
-
 
 /**
- * Deletes an admin account by id.
+ * Deletes an admin account by ID.
  *
- * @param {number|string} id - ID of the admin to delete.
- * @param {string} token - JWT for authentication.
- * @returns {Promise<Response>} fetch response with status.
+ * Only SUPER_ADMIN users can perform this, and the backend
+ * ensures the target is actually an ADMIN before removing it.
  */
-export async function deleteAdminRequest(id, token) {
-    return await fetch(`/api/superadmin/admins/${id}`, {
-        method: "DELETE",
-        headers: { "Authorization": `Bearer ${token}` }
+export async function deleteAdmin(id) {
+    return authFetch(`${BASE}/admins/${id}`, {
+        method: "DELETE"
     });
 }
+
+
+
+

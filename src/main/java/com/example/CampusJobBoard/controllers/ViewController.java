@@ -66,4 +66,9 @@ public class ViewController {
         return "superadmin/dashboard";
     }
 
+    @GetMapping("/superadmin/setup")
+    public String superAdminSetupPage() {
+        return "superadmin/setup";
+    }
+
 }

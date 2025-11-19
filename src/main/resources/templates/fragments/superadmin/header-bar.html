@@ -1,30 +1,30 @@
 <!--
     Fragment: headerBar
     Top navigation section used in the Super Admin dashboard.
-    Includes admin count, logout button, and the button to open the
-    Create Admin panel.
+    Shows admin count, logout, and a button to open the Create Admin panel.
 -->
 <div th:fragment="headerBar">
 
-    <!-- Layout container -->
     <div class="flex justify-between items-center mb-6">
 
-        <!-- Dynamic admin count updated by JS via setAdminCount() -->
+        <!-- Admin count -->
         <p id="adminCount" class="text-lg font-medium text-gray-700">
             Admins: 0 / 3
         </p>
 
-        <!-- Action buttons -->
         <div class="flex items-center gap-4">
 
-            <!-- Logout button -->
+            <!-- Display the Super Admin name -->
+            <p id="saNameDisplay" class="hidden text-gray-600 font-medium"></p>
+
+            <!-- Logout -->
             <button id="logoutBtn"
                     type="button"
                     class="text-red-600 font-medium hover:underline">
                 Logout
             </button>
 
-            <!-- Opens the Create Admin panel -->
+            <!-- Show Create Admin panel -->
             <button id="openCreateAdmin"
                     type="button"
                     class="px-4 py-2 bg-[#2A3810] text-white rounded-lg hover:bg-[#1f2b0c] transition">
@@ -33,5 +33,11 @@
 
         </div>
     </div>
+
+    <!-- logout confirmation message -->
+    <p id="logoutMessage"
+       class="hidden text-red-600 text-sm text-right italic">
+        Logging out...
+    </p>
 
 </div>

@@ -12,53 +12,56 @@
         Create New Admin
     </h2>
 
-    <!-- Success or error message shown after form submission -->
+    <!-- General success or backend-level error -->
     <p id="saMessage" class="hidden text-center mb-4 font-medium"></p>
 
-    <!-- Input fields for creating a new admin account -->
     <div class="space-y-4">
 
-        <!-- Full name field -->
+        <!-- Full Name -->
         <div>
             <label for="saName" class="font-medium">Full Name</label>
-            <input id="saName" type="text"
+            <input id="saName"
+                   type="text"
                    class="w-full p-3 border rounded-lg mt-1"
-                   placeholder="Jane Doe" />
+                   placeholder="Jane Doe">
+            <p id="errSaName" class="text-red-600 text-sm mt-1 hidden"></p>
         </div>
 
-        <!-- Email field -->
+        <!-- Email -->
         <div>
             <label for="saEmail" class="font-medium">Email</label>
-            <input id="saEmail" type="email"
+            <input id="saEmail"
+                   type="email"
                    class="w-full p-3 border rounded-lg mt-1"
-                   placeholder="admin@example.com" />
+                   placeholder="admin@example.com">
+            <p id="errSaEmail" class="text-red-600 text-sm mt-1 hidden"></p>
         </div>
 
-        <!-- Password field -->
+        <!-- Password -->
         <div>
             <label for="saPassword" class="font-medium">Password</label>
-            <input id="saPassword" type="password"
+            <input id="saPassword"
+                   type="password"
                    class="w-full p-3 border rounded-lg mt-1"
-                   placeholder="••••••••" />
+                   placeholder="••••••••">
+            <p id="errSaPassword" class="text-red-600 text-sm mt-1 hidden"></p>
         </div>
 
-        <!-- Form action buttons -->
+        <!-- Actions -->
         <div class="flex justify-end gap-3">
-            <!-- Close the panel without saving -->
+
             <button id="cancelCreateAdmin"
                     type="button"
                     class="px-4 py-2 border rounded-lg">
                 Cancel
             </button>
 
-            <!-- Trigger admin creation -->
-            <button id="saCreateBtn"
+            <button id="saCreateAdminBtn"
                     type="button"
                     class="px-4 py-2 bg-[#2A3810] text-white rounded-lg hover:bg-[#1f2b0c] transition">
                 Create Admin
             </button>
+
         </div>
-
     </div>
-
 </div>

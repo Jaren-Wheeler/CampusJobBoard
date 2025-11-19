@@ -3,36 +3,39 @@ package com.example.CampusJobBoard.dto;
 import com.example.CampusJobBoard.entities.User.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 /**
- * RegisterRequest is a Data Transfer Object used when a new user signs up for an account.
- * Includes:
- * - Full name
- * - Email
- * - Password
- * - Role (STUDENT, EMPLOYER, or ADMIN)
- * Validation annotations ensure all essential fields are provided and formatted correctly
- * before creating a new user record.
+ * DTO used when a new Student or Employer registers for an account.
+ * Provides full field-level validation for name, email, password, and role.
  */
 public class RegisterRequest {
 
-    /** User’s full name, required during registration */
     @NotBlank(message = "Full name is required")
+    @Size(min = 3, max = 50, message = "Full name must be between 3 and 50 characters")
+    @Pattern(
+            regexp = "^[A-Za-z]+( [A-Za-z]+)+$",
+            message = "Enter a valid full name (first and last)"
+    )
     private String fullName;
 
-    /** User’s email address, must follow valid format */
     @NotBlank(message = "Email is required")
-    @Email(message = "Email must be valid")
+    @Email(message = "Enter a valid email address")
     private String email;
 
-    /** Account password, cannot be blank and must meet security minimums */
     @NotBlank(message = "Password is required")
     @Size(min = 8, message = "Password must be at least 8 characters long")
+    @Pattern(
+            regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[!@#$%^&*()]).+$",
+            message = "Password must include upper, lower, number, and special character"
+    )
     private String password;
 
-    /** Role assigned at registration (STUDENT or EMPLOYER) */
+    /** STUDENT or EMPLOYER */
     private Role role;
+
+    // Getters and setters
 
     public String getFullName() { return fullName; }
     public void setFullName(String fullName) { this.fullName = fullName; }

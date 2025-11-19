@@ -1,74 +1,92 @@
 /**
- * Handles the login process for all user roles (Admin, Employer, Student, Super Admin).
- * Sends info to the backend authentication API and stores the returned JWT and role
- * for later authorization when calling protected endpoints.
+ * Login page logic for all user roles.
  *
- * The backend determines which role the user belongs to and includes it in the JWT payload.
+ * Handles:
+ *  - Field-level validation
+ *  - Sending login requests to the backend
+ *  - Storing session data (token, role)
+ *  - Redirecting users based on their role
  */
+
+import {
+    validateEmail,
+    validatePassword,
+    showFieldError,
+    clearErrors
+} from "./_shared/index.js"
+
 document.getElementById("loginBtn").addEventListener("click", async () => {
 
-    // Collect user input from the form
+    // Inputs
     const email = document.getElementById("loginEmail").value.trim();
-    const password = document.getElementById("loginPassword").value;
+    const password = document.getElementById("loginPassword").value.trim();
 
-    // Reference to the error message area
+    // Field error elements
+    const errorIds = ["errLoginEmail", "errLoginPassword"];
+
+    // Clear old errors
+    clearErrors(errorIds);
+
+    // Hide global backend error
     const errorEl = document.getElementById("loginError");
-    errorEl.classList.add("hidden"); // hide existing errors
+    errorEl.classList.add("hidden");
+    errorEl.textContent = "";
+
+    let hasError = false;
 
     /**
      * ===========================
-     * Frontend validation
+     * Field-level validation
      * ===========================
      */
-    if (!email || !password) {
-        errorEl.textContent = "Please enter both fields.";
-        errorEl.classList.remove("hidden");
-        return;
+
+    const emailErr = validateEmail(email);
+    if (emailErr) {
+        showFieldError("errLoginEmail", emailErr);
+        hasError = true;
     }
 
+    const pwErr = validatePassword(password);
+    if (pwErr) {
+        showFieldError("errLoginPassword", pwErr);
+        hasError = true;
+    }
+
+    if (hasError) return;
+
+    /**
+     * ===========================
+     * Send request to backend
+     * ===========================
+     */
+
     try {
-        /**
-         * ============================================================
-         * Send login request to backend (/api/auth/login)
-         * ============================================================
-         */
         const response = await fetch("/api/auth/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, password })
         });
 
-        // If login fails, backend will return 401 or 403
         if (!response.ok) {
-            const body = await response.text();
-            console.error("Login failed:", response.status, body);
-
+            // Failed login: show global error only
             errorEl.textContent = "Invalid email or password.";
             errorEl.classList.remove("hidden");
             return;
         }
 
-        // Successfully authenticated → extract returned data
-        const data = await response.json();
-        const { token, role, fullName } = data;
-
         /**
-         * ============================================================
-         * Store JWT + role in sessionStorage
-         * ============================================================
-         *
-         * sessionStorage is used instead of localStorage to reduce risk
-         * because the token disappears when the tab/browser closes.
+         * ===========================
+         * Success
+         * ===========================
          */
+        const data = await response.json();
+        const { token, role, mustUpdateProfile } = data;
+
         sessionStorage.setItem("token", token);
         sessionStorage.setItem("role", role);
-        sessionStorage.setItem("fullName", fullName);
+        sessionStorage.setItem("fullName", email);
 
-        /**
-         * ============================================================
-         * Redirect user to their role-based dashboard
-         * ============================================================
-         */
+        // Redirect by role
         switch (role) {
             case "ADMIN":
                 window.location.href = "/admin/dashboard";
@@ -80,19 +98,17 @@ document.getElementById("loginBtn").addEventListener("click", async () => {
                 window.location.href = "/student/dashboard";
                 break;
             case "SUPER_ADMIN":
-                window.location.href = "/superadmin/dashboard";
+                window.location.href = mustUpdateProfile
+                    ? "/superadmin/setup"
+                    : "/superadmin/dashboard";
                 break;
             default:
-                console.error("Unknown role received from backend:", role);
+                console.error("Unknown role:", role);
         }
 
     } catch (err) {
-        /**
-         * Network errors or unexpected exceptions
-         */
         console.error("Network error:", err);
-
-        errorEl.textContent = "Login error.";
+        errorEl.textContent = "Login error. Please try again.";
         errorEl.classList.remove("hidden");
     }
 });

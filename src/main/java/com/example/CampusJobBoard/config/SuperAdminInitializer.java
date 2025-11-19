@@ -40,7 +40,6 @@ public class SuperAdminInitializer implements CommandLineRunner {
      */
     @Override
     public void run(String... args) {
-        // Create initial SUPER_ADMIN only if one does not already exist
         if (userRepository.countByRole(User.Role.SUPER_ADMIN) == 0) {
 
             User superAdmin = new User();
@@ -48,6 +47,9 @@ public class SuperAdminInitializer implements CommandLineRunner {
             superAdmin.setEmail("superadmin@system.com");
             superAdmin.setPassword(passwordEncoder.encode("SuperAdmin123!"));
             superAdmin.setRole(User.Role.SUPER_ADMIN);
+
+            // REQUIRED — without this setup will never trigger
+            superAdmin.setMustUpdateProfile(true);
 
             userRepository.save(superAdmin);
 
