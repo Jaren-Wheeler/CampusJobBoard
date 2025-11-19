@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
+import java.util.Set;
+
 /**
  * Represents a user account within the Campus Job Board system.
  *
@@ -52,6 +54,14 @@ public class User {
         ACTIVE, INACTIVE
     }
 
+    // One user can have many jobs
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Job> jobs;
+
+    // One user can have many job applications
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<JobApplication> applications;
+
     // --- Getters and Setters ---
 
     public Long getUserId() { return userId; }
@@ -72,12 +82,6 @@ public class User {
     public Status getStatus() { return status; }
     public void setStatus(Status status) { this.status = status; }
 
-    public boolean isMustUpdateProfile() {
-        return mustUpdateProfile;
-    }
-
-    public void setMustUpdateProfile(boolean mustUpdateProfile) {
-        this.mustUpdateProfile = mustUpdateProfile;
-    }
+    public boolean isMustUpdateProfile() { return mustUpdateProfile; }
+    public void setMustUpdateProfile(boolean mustUpdateProfile) { this.mustUpdateProfile = mustUpdateProfile; }
 }
-
