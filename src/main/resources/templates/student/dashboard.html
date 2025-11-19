@@ -38,21 +38,40 @@
     </div>
 
      <div id="jobModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center hidden z-50">
-         <div id="modalContent" class="fixed bg-white p-4 w-3/4 h-3/4 flex flex-col">
-             <button class="justify-center self-end" onclick="closeModal()">X</button>
-             <h1 class="text-center">INSERT TITLE OF JOB HERE</h1>
-             <div class="flex flex-row justify-center gap-4 h-full">
-                 <p>Here is a long description of the job which fits in a character limit.</p>
-                 <table class="w-1/6 divide-y divide-gray-300">
+         <div id="modalContent" class="bg-white p-4 w-1/2 h-3/4 flex flex-col items-center overflow-hidden rounded">
+             <button class="justify-center self-end" onclick="closeModal()">x</button>
+             <h1 class="text-center m-4 text-lg font-bold">INSERT TITLE OF JOB HERE</h1>
+             <div class="flex flex-row gap-4 w-full h-full m-4 justify-content flex-1 overflow-hidden">
+                 <div class="flex-1 w-3/4 overflow-y-auto pr-4">
+                     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus pulvinar massa arcu, ac tincidunt sapien placerat a. Duis sit amet euismod lacus, in luctus leo. Nulla eu gravida nisi. Vestibulum suscipit felis augue, id fringilla nunc varius quis. In eget cursus tortor. Morbi sagittis tristique massa, sed vestibulum arcu vulputate eu. Vivamus vel lorem id turpis tincidunt pellentesque venenatis ut diam. Donec quis suscipit mauris, non condimentum sapien. Suspendisse potenti. Nullam ultrices a sem ac interdum.</p>
+                     <p>Curabitur lobortis nulla arcu, vel accumsan purus imperdiet vitae. Morbi nec eros non velit vulputate pellentesque. In sed dictum metus. Cras condimentum, ipsum non viverra feugiat, quam dolor luctus ante, ut iaculis turpis orci quis ante. Nulla facilisi. Nunc eu risus tristique, interdum nisl ut, ullamcorper purus. Aliquam ullamcorper arcu ac nisl ultricies tincidunt. Mauris quis bibendum arcu. Integer commodo sagittis leo, vel suscipit erat.</p>
+                     <p>Etiam sed fringilla quam. Proin tincidunt turpis nunc, ut mattis sem pretium ac. Nam porta eget odio vehicula egestas. Aliquam justo arcu, vulputate quis gravida at, congue eget risus. Praesent elementum ligula sit amet augue commodo ullamcorper. Donec vulputate viverra pulvinar. Donec non ipsum ac lorem fermentum congue. Curabitur cursus elit a ex commodo, at interdum ligula rhoncus. Phasellus fringilla sapien sed mauris dignissim, non varius purus interdum. Sed porta mi sit amet vehicula molestie. Ut imperdiet metus sed nulla pretium varius.</p>
+                 </div>
+                 <table class="w-1/4 divide-y divide-gray-300">
                      <thead class="bg-gray-100">
                      <tr>
                          <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Job Info</th>
                      </tr>
                      </thead>
                      <tbody class="divide-y divide-gray-200">
-                     <tr class="hover:bg-gray-50">
-                         <td class="px-4 py-2 text-sm text-gray-800">Software Engineer</td>
-                     </tr>
+                         <tr class="hover:bg-gray-50">
+                             <td class="px-4 py-2 text-sm text-gray-800">Job Title: Software Engineer</td>
+                         </tr>
+                         <tr class="hover:bg-gray-50">
+                             <td class="px-4 py-2 text-sm text-gray-800">Company: Google</td>
+                         </tr>
+                         <tr class="hover:bg-gray-50">
+                             <td class="px-4 py-2 text-sm text-gray-800">Field: Tech</td>
+                         </tr>
+                         <tr class="hover:bg-gray-50">
+                             <td class="px-4 py-2 text-sm text-gray-800">Salary: $150,000</td>
+                         </tr>
+                         <tr class="hover:bg-gray-50">
+                             <td class="px-4 py-2 text-sm text-gray-800">Date Posted: 2025-11-18</td>
+                         </tr>
+                         <tr class="hover:bg-gray-50">
+                             <td class="px-4 py-2 text-sm text-gray-800">Application Deadline: 2025-12-01</td>
+                         </tr>
                      </tbody>
                  </table>
              </div>
