@@ -31,22 +31,24 @@
             <thead class="bg-gray-100">
                 <tr>
                     <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Job Title</th>
-                    <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Employer</th>
+                    <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Location</th>
                     <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Category</th>
                     <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Salary</th>
+                    <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Posted</th>
                     <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Deadline</th>
                     <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Job Details</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-200">
-            <tr class="hover:bg-gray-50">
-                <td class="px-4 py-2 text-sm text-gray-800">Software Engineer</td>
-                <td class="px-4 py-2 text-sm text-gray-800">Google</td>
-                <td class="px-4 py-2 text-sm text-gray-800">Tech</td>
-                <td class="px-4 py-2 text-sm text-gray-800">$150,000</td>
-                <td class="px-4 py-2 text-sm text-gray-800">2025-12-01</td>
+            <tr th:each="job : ${jobs}" class="hover:bg-gray-50">
+                <td class="px-4 py-2 text-sm text-gray-800" th:text="${job.jobTitle}"></td>
+                <td class="px-4 py-2 text-sm text-gray-800" th:text="${job.location}"></td>
+                <td class="px-4 py-2 text-sm text-gray-800" th:text="${job.category}"></td>
+                <td class="px-4 py-2 text-sm text-gray-800" th:text="${job.salary}"></td>
+                <td class="px-4 py-2 text-sm text-gray-800" th:text="${job.createdAt}"></td>
+                <td class="px-4 py-2 text-sm text-gray-800" th:text="${job.deadline}"></td>
                 <td>
-                    <button id="job-detail-btn" class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700" onclick="openModal()">View Job</button>
+                    <button id="job-detail-btn" class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700" onclick="openModal([[${job.jobId}]])">View Job</button>
                 </td>
             </tr>
             </tbody>
@@ -91,7 +93,12 @@
                      </tbody>
                  </table>
              </div>
-             <button id="apply-btn" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 w-auto self-end" onclick="openApplyModal()">Apply</button>
+             <form th:action="@{/api/student/submit}" th:object="${jobApplication}" method="post">
+
+                 <input type="hidden" name="JobId" id="jobIdInput" />
+
+                 <button id="apply-btn" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 w-auto self-end" onclick="openApplyModal()">Apply</button>
+             </form>
          </div>
      </div>
 

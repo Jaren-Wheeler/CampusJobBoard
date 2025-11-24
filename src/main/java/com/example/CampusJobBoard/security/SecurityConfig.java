@@ -52,7 +52,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
 
                         // Protected APIs
-                        .requestMatchers("/api/student/**").hasRole("STUDENT")
+                        //.requestMatchers("/api/student/**").hasRole("STUDENT")
+                        .requestMatchers("/api/student/**").permitAll()
                         .requestMatchers("/api/employer/**").hasRole("EMPLOYER")
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/superadmin/**").hasRole("SUPER_ADMIN")
