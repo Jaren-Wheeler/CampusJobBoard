@@ -1,7 +1,13 @@
 package com.example.CampusJobBoard.controllers;
 
+import com.example.CampusJobBoard.entities.Job;
+import com.example.CampusJobBoard.entities.JobApplication;
+import com.example.CampusJobBoard.services.ApplicationService;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+
+import java.util.List;
 
 /**
  * Handles all page-level routing for the frontend.
@@ -11,6 +17,12 @@ import org.springframework.web.bind.annotation.GetMapping;
  */
 @Controller
 public class ViewController {
+
+    private final ApplicationService appService;
+
+    public ViewController(ApplicationService appService) {
+        this.appService = appService;
+    }
 
     /**
      * Default root route.
@@ -33,7 +45,11 @@ public class ViewController {
      * Student dashboard.
      */
     @GetMapping("/student/dashboard")
-    public String studentDash() {
+    public String studentDash(Model model) {
+        List<Job> jobs = appService.getApprovedJobs();
+        model.addAttribute("jobs",jobs);
+
+        model.addAttribute("jobApplication", new JobApplication());
         return "student/dashboard";
     }
 

@@ -25,9 +25,11 @@ public class Job {
 
     private Date Deadline;
 
-    private enum Status {
+    public enum Status {
         PENDING, APPROVED, REJECTED
-    }
+    };
+    @Enumerated(EnumType.STRING)
+    private Status status;
 
     private Date CreatedAt;
 

@@ -180,4 +180,8 @@ public class UserService {
         userRepository.save(superAdmin);
     }
 
+    public User findByEmail(String currentEmail) {
+        return userRepository.findByEmail(currentEmail)
+                .orElseThrow(() -> new RuntimeException("User not found with email: " + currentEmail));
+    }
 }
