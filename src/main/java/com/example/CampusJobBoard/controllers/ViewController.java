@@ -2,11 +2,16 @@ package com.example.CampusJobBoard.controllers;
 
 import com.example.CampusJobBoard.entities.Job;
 import com.example.CampusJobBoard.entities.JobApplication;
+import com.example.CampusJobBoard.entities.User;
 import com.example.CampusJobBoard.services.ApplicationService;
+import com.example.CampusJobBoard.services.JobService;
+import com.example.CampusJobBoard.services.UserService;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.security.Principal;
 import java.util.List;
 
 /**
@@ -19,9 +24,13 @@ import java.util.List;
 public class ViewController {
 
     private final ApplicationService appService;
+    private final UserService userService;
+    private final JobService jobService;
 
-    public ViewController(ApplicationService appService) {
+    public ViewController(ApplicationService appService, UserService userService, JobService jobService) {
         this.appService = appService;
+        this.userService = userService;
+        this.jobService = jobService;
     }
 
     /**
@@ -45,13 +54,24 @@ public class ViewController {
      * Student dashboard.
      */
     @GetMapping("/student/dashboard")
-    public String studentDash(Model model) {
-        List<Job> jobs = appService.getApprovedJobs();
-        model.addAttribute("jobs",jobs);
+    public String dashboard(Model model, Authentication authentication) {
 
-        model.addAttribute("jobApplication", new JobApplication());
+        /*if (authentication == null || !authentication.isAuthenticated()) {
+            return "redirect:/login";
+        }*/
+        System.out.println("AUTH = " + authentication);
+        System.out.println("AUTHORITIES = " + authentication.getAuthorities());
+
+        String email = authentication.getName();  // always works if JWT is configured correctly
+        User user = userService.findByEmail(email);
+
+        model.addAttribute("loggedInUser", user);
+        model.addAttribute("jobs", jobService.getApprovedJobs());
+
         return "student/dashboard";
     }
+
+
 
     @GetMapping("/student/myApplications")
     public String studentMyApplications() {

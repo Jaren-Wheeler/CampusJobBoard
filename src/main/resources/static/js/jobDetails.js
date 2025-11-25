@@ -5,7 +5,7 @@ function openModal(id) {
     let modal = document.getElementById("jobModal");
     modal.classList.remove("hidden");
 
-    document.getElementById("jobIdInput").value = jobId;
+    document.getElementById("jobIdInput").value = id;
 }
 
 //closes the details modal
