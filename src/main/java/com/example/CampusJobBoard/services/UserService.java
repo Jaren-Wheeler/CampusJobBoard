@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -180,8 +181,13 @@ public class UserService {
         userRepository.save(superAdmin);
     }
 
-    public User findByEmail(String currentEmail) {
-        return userRepository.findByEmail(currentEmail)
-                .orElseThrow(() -> new RuntimeException("User not found with email: " + currentEmail));
+    public User findUserById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+    }
+
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + email));
     }
 }

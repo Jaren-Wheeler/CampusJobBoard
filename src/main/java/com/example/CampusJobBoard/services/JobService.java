@@ -20,4 +20,8 @@ public class JobService {
         return jobRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Job not found with id: " + id));
     }
+
+    public Object getApprovedJobs() {
+        return jobRepository.findByStatus(Job.Status.APPROVED);
+    }
 }

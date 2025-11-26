@@ -7,6 +7,7 @@ import com.example.CampusJobBoard.services.ApplicationService;
 import com.example.CampusJobBoard.services.JobService;
 import com.example.CampusJobBoard.services.UserService;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.util.List;
@@ -35,8 +36,7 @@ public class StudentController {
 
     // Submit job application
     @PostMapping("/submit")
-    public String submitApplication(@RequestParam Long JobId,
-                                    Principal principal) {
+    public String submitApplication(@RequestParam Long JobId, Principal principal) {
 
         User user = userService.findByEmail(principal.getName());
         Job job = jobService.findJobById(JobId);
@@ -52,8 +52,8 @@ public class StudentController {
 
     // Get current user's applied jobs
     @GetMapping("/applications")
-    public List<JobApplication> getMyApps(Principal principal) {
-        User user = userService.findByEmail(principal.getName());
+    public List<JobApplication> getMyApps(@RequestParam Long userId) {
+        User user = userService.findUserById(userId);
         return appService.getApplicationsByUser(user);
     }
 }
