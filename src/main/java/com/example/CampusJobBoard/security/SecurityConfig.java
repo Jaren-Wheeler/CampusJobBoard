@@ -47,6 +47,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/login", "/css/**", "/js/**", "/images/**").permitAll()
+                        .requestMatchers("/register").permitAll()
                         .requestMatchers("/student/dashboard").hasRole("STUDENT")
                         .requestMatchers("/employer/dashboard").hasRole("EMPLOYER")
                         .requestMatchers("/admin/dashboard").hasRole("ADMIN")
@@ -63,7 +64,27 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .defaultSuccessUrl("/student/dashboard", true)
+                        .successHandler((request, response, authentication) -> {
+                            String role = authentication.getAuthorities()
+                                    .iterator().next().getAuthority();
+
+                            switch (role) {
+                                case "ROLE_STUDENT":
+                                    response.sendRedirect("/student/dashboard");
+                                    break;
+                                case "ROLE_EMPLOYER":
+                                    response.sendRedirect("/employer/dashboard");
+                                    break;
+                                case "ROLE_ADMIN":
+                                    response.sendRedirect("/admin/dashboard");
+                                    break;
+                                case "ROLE_SUPER_ADMIN":
+                                    response.sendRedirect("/superadmin/dashboard");
+                                    break;
+                                default:
+                                    response.sendRedirect("/login");
+                            }
+                        })
                         .permitAll()
                 )
                 .logout(logout -> logout

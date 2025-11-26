@@ -8,7 +8,7 @@
  *  - Redirecting users based on their role
  */
 
-import {
+/* /*import {
     validateEmail,
     validatePassword,
     showFieldError,
@@ -40,7 +40,7 @@ document.getElementById("loginBtn").addEventListener("click", async () => {
      * ===========================
      */
 
-    const emailErr = validateEmail(email);
+    /*const emailErr = validateEmail(email);
     if (emailErr) {
         showFieldError("errLoginEmail", emailErr);
         hasError = true;
@@ -52,7 +52,7 @@ document.getElementById("loginBtn").addEventListener("click", async () => {
         hasError = true;
     }
 
-    if (hasError) return;
+    if (hasError) return;*/
 
     /**
      * ===========================
@@ -60,7 +60,7 @@ document.getElementById("loginBtn").addEventListener("click", async () => {
      * ===========================
      */
 
-    try {
+   /* try {
         const response = await fetch("/api/auth/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -79,15 +79,15 @@ document.getElementById("loginBtn").addEventListener("click", async () => {
          * Success
          * ===========================
          */
-        const data = await response.json();
-        const { token, role, mustUpdateProfile } = data;
+      /*  const data = await response.json();
+        const { token, role, mustUpdateProfile } = data; */
 
-        sessionStorage.setItem("token", token);
-        sessionStorage.setItem("role", role);
-        sessionStorage.setItem("fullName", email);
+        //sessionStorage.setItem("token", token);
+        //sessionStorage.setItem("role", role);
+        //sessionStorage.setItem("fullName", email);
 
         // Redirect by role
-        switch (role) {
+        /*switch (role) {
             case "ADMIN":
                 window.location.href = "/admin/dashboard";
                 break;
@@ -111,4 +111,51 @@ document.getElementById("loginBtn").addEventListener("click", async () => {
         errorEl.textContent = "Login error. Please try again.";
         errorEl.classList.remove("hidden");
     }
+}); */
+
+/**
+ * Login page logic (client-side validation ONLY)
+ */
+
+import {
+    validateEmail,
+    validatePassword,
+    showFieldError,
+    clearErrors
+} from "./_shared/index.js";
+
+// When user clicks login button
+document.getElementById("loginBtn").addEventListener("click", (e) => {
+    const email = document.getElementById("loginEmail").value.trim();
+    const password = document.getElementById("loginPassword").value.trim();
+
+    // Clear errors
+    clearErrors(["errLoginEmail", "errLoginPassword"]);
+    const errorEl = document.getElementById("loginError");
+    errorEl.classList.add("hidden");
+    errorEl.textContent = "";
+
+    let hasError = false;
+
+    // VALIDATION
+    const emailErr = validateEmail(email);
+    if (emailErr) {
+        showFieldError("errLoginEmail", emailErr);
+        hasError = true;
+    }
+
+    const pwErr = validatePassword(password);
+    if (pwErr) {
+        showFieldError("errLoginPassword", pwErr);
+        hasError = true;
+    }
+
+    // BLOCK SUBMIT IF INVALID
+    if (hasError) {
+        e.preventDefault(); // IMPORTANT
+        return;
+    }
+
+    // Otherwise allow form submit to Spring Security
 });
+
