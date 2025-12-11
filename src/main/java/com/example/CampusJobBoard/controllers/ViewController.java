@@ -15,6 +15,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.util.List;
@@ -79,6 +81,7 @@ public class ViewController {
         String email = authentication.getName();  // always works if JWT is configured correctly
         User user = userService.findByEmail(email);
 
+        // pass logged in user to the dashboard
         model.addAttribute("loggedInUser", user);
         model.addAttribute("jobs", jobService.getApprovedJobs());
 
@@ -86,11 +89,23 @@ public class ViewController {
     }
 
 
-
     @GetMapping("/student/myApplications")
-    public String studentMyApplications() {
+    public String studentMyApplications(Model model, Authentication authentication) {
+
+        // Get logged-in user's email
+        String email = authentication.getName();
+        User user = userService.findByEmail(email);
+
+        // Get their applications
+        List<JobApplication> apps = appService.getApplicationsByUser(user);
+
+        // Give to Thymeleaf
+        model.addAttribute("applications", apps);
+        model.addAttribute("loggedInUser", user);
+
         return "student/myApplications";
     }
+
 
     /**
      * Employer dashboard.
@@ -108,6 +123,29 @@ public class ViewController {
         model.addAttribute("jobs", jobService.getApprovedJobs());
         return "employer/dashboard";
     }
+
+    @PostMapping("/student/submit")
+    public String submitApplication(@RequestParam Long JobId,
+                                    Principal principal,
+                                    RedirectAttributes redirectAttributes) {
+
+        User user = userService.findByEmail(principal.getName());
+        Job job = jobService.findJobById(JobId);
+
+        JobApplication app = new JobApplication();
+        app.setUser(user);
+        app.setJob(job);
+
+        try {
+            appService.submit(app);
+            redirectAttributes.addFlashAttribute("success", "Application submitted successfully!");
+        } catch (IllegalStateException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+
+        return "redirect:/student/dashboard";
+    }
+
 
     /**
      * Admin dashboard.
