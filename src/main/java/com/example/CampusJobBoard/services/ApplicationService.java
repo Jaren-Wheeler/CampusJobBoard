@@ -5,6 +5,7 @@ import com.example.CampusJobBoard.entities.JobApplication;
 import com.example.CampusJobBoard.entities.User;
 import com.example.CampusJobBoard.repositories.JobApplicationRepository;
 import com.example.CampusJobBoard.repositories.JobRepository;
+import com.example.CampusJobBoard.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,6 +29,16 @@ public class ApplicationService {
 
     // submits the job application
     public JobApplication submit(JobApplication application) {
+        User user = application.getUser();
+        Job job = application.getJob();
+
+        // Check if this user has already applied to this job
+        boolean alreadyApplied = applicationRepository.existsByUserAndJob(user, job);
+
+        // if user already applied to that job, throw error
+        if (alreadyApplied) {
+            throw new IllegalStateException("You have already applied to this job.");
+        }
         return applicationRepository.save(application);
     }
 

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
 import java.util.List;
@@ -99,6 +100,7 @@ public class ViewController {
 
         // Give to Thymeleaf
         model.addAttribute("applications", apps);
+        model.addAttribute("loggedInUser", user);
 
         return "student/myApplications";
     }
@@ -119,6 +121,36 @@ public class ViewController {
         model.addAttribute("loggedInUser", user);
         model.addAttribute("jobs", jobService.getApprovedJobs());
         return "employer/dashboard";
+    }
+
+    @PostMapping("/student/submit")
+    public String submitApplication(@RequestParam Long JobId,
+                                    Authentication authentication,
+                                    Model model) {
+
+        // Logged-in user
+        String email = authentication.getName();
+        User user = userService.findByEmail(email);
+
+        // Job
+        Job job = jobService.findJobById(JobId);
+
+        JobApplication app = new JobApplication();
+        app.setUser(user);
+        app.setJob(job);
+
+        try {
+            appService.submit(app);
+            model.addAttribute("success", "Application submitted successfully!");
+        } catch (IllegalStateException e) {
+            model.addAttribute("error", e.getMessage());
+        }
+
+        // Reload dashboard data
+        model.addAttribute("loggedInUser", user);
+        model.addAttribute("jobs", jobService.getApprovedJobs());
+
+        return "student/dashboard";
     }
 
     /**

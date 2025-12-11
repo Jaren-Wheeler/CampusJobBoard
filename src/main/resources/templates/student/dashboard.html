@@ -10,6 +10,16 @@
 <body>
     <div class="w-3/4 mx-auto flex justify-between items-center mt-4">
         <h1 class="text-xl font-semibold">Welcome, <span th:text="${loggedInUser.fullName}"></span></h1>
+
+        <!-- success or error message -->
+        <div th:if="${error}" class="bg-red-100 text-red-800 p-3 rounded mb-4">
+            <p th:text="${error}"></p>
+        </div>
+
+        <div th:if="${success}" class="bg-green-100 text-green-800 p-3 rounded mb-4">
+            <p th:text="${success}"></p>
+        </div>
+
         <div class="flex gap-4">
             <a th:href="@{/student/myApplications}">
                 <button class="px-4 py-2 bg-gray-200 text-gray-900 rounded hover:bg-gray-300">
@@ -73,7 +83,7 @@
 
             <button class="justify-center self-end" onclick="closeModal()">x</button>
 
-            <!-- Dynamic Job Title -->
+            <!-- Job Title -->
             <h1 id="modalJobTitle" class="text-center m-4 text-lg font-bold"></h1>
 
             <div class="flex flex-row gap-4 w-full h-full m-4 justify-content flex-1 overflow-hidden">
@@ -122,7 +132,7 @@
             </div>
 
             <!-- Apply Form -->
-            <form th:action="@{/api/student/submit}" method="post">
+            <form th:action="@{/student/submit}" method="post">
                 <input type="hidden" name="JobId" id="jobIdInput" />
                 <button class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 w-auto self-end">Apply</button>
             </form>

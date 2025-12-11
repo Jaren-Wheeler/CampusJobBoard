@@ -7,7 +7,9 @@ import com.example.CampusJobBoard.services.ApplicationService;
 import com.example.CampusJobBoard.services.JobService;
 import com.example.CampusJobBoard.services.UserService;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.util.List;
@@ -33,9 +35,9 @@ public class StudentController {
         return appService.getApprovedJobs();
     }
 
-    // Submit job application
+    // submit application
     @PostMapping("/submit")
-    public String submitApplication(@RequestParam Long JobId, Principal principal) {
+    public ResponseEntity<String> submitRest(@RequestParam Long JobId, Principal principal) {
 
         User user = userService.findByEmail(principal.getName());
         Job job = jobService.findJobById(JobId);
@@ -44,9 +46,12 @@ public class StudentController {
         app.setUser(user);
         app.setJob(job);
 
-        appService.submit(app);
-
-        return "Application submitted";
+        try {
+            appService.submit(app);
+            return ResponseEntity.ok("Application submitted successfully!");
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     // Get current user's applied jobs

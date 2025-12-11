@@ -9,7 +9,12 @@ import java.util.List;
 import java.util.Optional;
 
 public interface JobApplicationRepository extends JpaRepository<JobApplication, Long> {
+    // Finds all job applications by id
     Optional<JobApplication> findById(Long jobApplicationId);
 
+    // lists all job applications corresponding to specific user id
     List<JobApplication> findByUser(User user);
+
+    // checks if job application already exists for a certain job and user id.
+    boolean existsByUserAndJob(User user, Job job);
 }
