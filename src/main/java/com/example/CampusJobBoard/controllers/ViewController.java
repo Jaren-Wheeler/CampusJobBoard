@@ -79,6 +79,7 @@ public class ViewController {
         String email = authentication.getName();  // always works if JWT is configured correctly
         User user = userService.findByEmail(email);
 
+        // pass logged in user to the dashboard
         model.addAttribute("loggedInUser", user);
         model.addAttribute("jobs", jobService.getApprovedJobs());
 

@@ -27,7 +27,6 @@ public class StudentController {
         this.userService = userService;
         this.jobService = jobService;
     }
-
     // Return all approved jobs
     @GetMapping
     public List<Job> getAllJobs() {
