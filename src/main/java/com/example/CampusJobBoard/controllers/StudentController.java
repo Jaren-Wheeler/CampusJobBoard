@@ -37,7 +37,7 @@ public class StudentController {
 
     // submit application
     @PostMapping("/submit")
-    public ResponseEntity<String> submitRest(@RequestParam Long JobId, Principal principal) {
+    public ResponseEntity<String> submitApplication(@RequestParam Long JobId, Principal principal) {
 
         User user = userService.findByEmail(principal.getName());
         Job job = jobService.findJobById(JobId);

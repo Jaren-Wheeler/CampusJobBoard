@@ -16,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.util.List;
@@ -125,14 +126,10 @@ public class ViewController {
 
     @PostMapping("/student/submit")
     public String submitApplication(@RequestParam Long JobId,
-                                    Authentication authentication,
-                                    Model model) {
+                                    Principal principal,
+                                    RedirectAttributes redirectAttributes) {
 
-        // Logged-in user
-        String email = authentication.getName();
-        User user = userService.findByEmail(email);
-
-        // Job
+        User user = userService.findByEmail(principal.getName());
         Job job = jobService.findJobById(JobId);
 
         JobApplication app = new JobApplication();
@@ -141,17 +138,14 @@ public class ViewController {
 
         try {
             appService.submit(app);
-            model.addAttribute("success", "Application submitted successfully!");
+            redirectAttributes.addFlashAttribute("success", "Application submitted successfully!");
         } catch (IllegalStateException e) {
-            model.addAttribute("error", e.getMessage());
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
 
-        // Reload dashboard data
-        model.addAttribute("loggedInUser", user);
-        model.addAttribute("jobs", jobService.getApprovedJobs());
-
-        return "student/dashboard";
+        return "redirect:/student/dashboard";
     }
+
 
     /**
      * Admin dashboard.
