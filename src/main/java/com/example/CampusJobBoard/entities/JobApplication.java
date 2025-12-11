@@ -10,9 +10,13 @@ public class JobApplication {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long jobApplicationId;
 
-    public enum status {
+    public enum Status {
         SUBMITTED, ACCEPTED, REJECTED
     }
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Status status = Status.SUBMITTED;
 
     // connect to user table
     @ManyToOne(fetch = FetchType.LAZY)
@@ -35,6 +39,10 @@ public class JobApplication {
     public void setJobApplicationId(Long jobApplicationId) {
         this.jobApplicationId = jobApplicationId;
     }
+
+    public Status getStatus() {return status;}
+
+    public void setStatus(Status status) {this.status = status;}
 
     public User getUser() {
         return user;

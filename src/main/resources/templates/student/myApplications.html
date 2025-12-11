@@ -37,14 +37,27 @@
                 </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200">
-                <tr class="hover:bg-gray-50">
-                    <td class="px-4 py-2 text-sm text-gray-800">Software Engineer</td>
-                    <td class="px-4 py-2 text-sm text-gray-800">Google</td>
-                    <td class="px-4 py-2 text-sm text-gray-800">1</td>
-                    <td class="px-4 py-2 text-sm text-gray-800">2025-11-19</td>
-                    <td class="px-4 py-2 text-sm text-gray-800">SUBMITTED</td>
+                <tr th:each="app : ${applications}">
+
+                    <!-- Job Title -->
+                    <td th:text="${app.job.jobTitle}"></td>
+
+                    <!-- Employer Name -->
+                    <td th:text="${app.job.user.fullName}"></td>
+
+                    <!-- Application ID -->
+                    <td th:text="${app.jobApplicationId}"></td>
+
+                    <!-- Submission Date -->
+                    <td th:text="${app.job.createdAt}"></td>
+
+                    <!-- Application Status -->
+                    <td th:text="${app.status}"></td>
+
                 </tr>
+
                 </tbody>
+
             </table>
         </div>
 

@@ -87,11 +87,22 @@ public class ViewController {
     }
 
 
-
     @GetMapping("/student/myApplications")
-    public String studentMyApplications() {
+    public String studentMyApplications(Model model, Authentication authentication) {
+
+        // Get logged-in user's email
+        String email = authentication.getName();
+        User user = userService.findByEmail(email);
+
+        // Get their applications
+        List<JobApplication> apps = appService.getApplicationsByUser(user);
+
+        // Give to Thymeleaf
+        model.addAttribute("applications", apps);
+
         return "student/myApplications";
     }
+
 
     /**
      * Employer dashboard.
