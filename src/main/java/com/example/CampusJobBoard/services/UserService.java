@@ -9,6 +9,7 @@ import com.example.CampusJobBoard.repositories.UserRepository;
 import com.example.CampusJobBoard.exceptions.ValidationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import com.example.CampusJobBoard.exceptions.AdminLimitExceededException;
 
 import java.util.HashMap;
 import java.util.List;
@@ -34,11 +35,13 @@ public class UserService {
     public void createAdmin(CreateAdminRequest req) {
 
         if (countAdmins() >= 3) {
-            throw new IllegalStateException("Cannot exceed 3 admin accounts.");
+            throw new AdminLimitExceededException("Cannot exceed 3 admin accounts.");
         }
 
         if (userRepository.existsByEmail(req.getEmail())) {
-            throw new IllegalStateException("Email is already in use.");
+            throw new ValidationException(
+                    Map.of("email", "Email is already in use.")
+            );
         }
 
         User admin = new User();

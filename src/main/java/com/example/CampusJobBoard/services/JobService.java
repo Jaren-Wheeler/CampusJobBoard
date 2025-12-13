@@ -4,6 +4,7 @@ import com.example.CampusJobBoard.entities.Job;
 import com.example.CampusJobBoard.repositories.JobRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.example.CampusJobBoard.exceptions.JobNotFoundException;
 
 @Service
 public class JobService {
@@ -18,7 +19,7 @@ public class JobService {
 
     public Job findJobById(Long id) {
         return jobRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Job not found with id: " + id));
+                .orElseThrow(() -> new JobNotFoundException(id));
     }
 
     public Object getApprovedJobs() {

@@ -78,10 +78,8 @@ public class ViewController {
         System.out.println("AUTH = " + authentication);
         System.out.println("AUTHORITIES = " + authentication.getAuthorities());
 
-        String email = authentication.getName();  // always works if JWT is configured correctly
+        String email = authentication.getName();
         User user = userService.findByEmail(email);
-
-        // pass logged in user to the dashboard
         model.addAttribute("loggedInUser", user);
         model.addAttribute("jobs", jobService.getApprovedJobs());
 
@@ -115,10 +113,8 @@ public class ViewController {
         System.out.println("AUTH = " + authentication);
         System.out.println("AUTHORITIES = " + authentication.getAuthorities());
 
-        String email = authentication.getName();  // always works if JWT is configured correctly
+        String email = authentication.getName();
         User user = userService.findByEmail(email);
-
-        // do this but with their job postings instead of available jobs
         model.addAttribute("loggedInUser", user);
         model.addAttribute("jobs", jobService.getApprovedJobs());
         return "employer/dashboard";
