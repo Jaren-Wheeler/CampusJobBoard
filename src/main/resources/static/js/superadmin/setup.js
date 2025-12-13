@@ -8,7 +8,6 @@
  */
 
 import {
-    authFetch,
     validateEmail,
     validateFullName,
     validatePassword
@@ -43,7 +42,7 @@ function clearErrors() {
  */
 async function loadProfile() {
     try {
-        const res = await authFetch("/api/superadmin/profile");
+        const res = await fetch("/api/superadmin/profile", { credentials: "same-origin" });
         const data = await res.json();
 
         nameEl.value = data.fullName || "";
@@ -101,11 +100,13 @@ document.getElementById("setupSubmit").addEventListener("click", async () => {
     const payload = { fullName, email, password };
 
     try {
-        const res = await authFetch("/api/superadmin/update-profile", {
+        const res = await fetch("/api/superadmin/update-profile", {
             method: "PUT",
+            credentials: "same-origin",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload)
         });
+
 
         if (!res.ok) {
             const errors = await res.json();
@@ -139,7 +140,8 @@ document.getElementById("setupSubmit").addEventListener("click", async () => {
 
         // Redirect back to dashboard
         setTimeout(() => {
-            window.location.href = "/superadmin/dashboard";
+            sessionStorage.clear();   // clear JWT + role
+            window.location.href = "/login";
         }, 800);
 
     } catch (err) {

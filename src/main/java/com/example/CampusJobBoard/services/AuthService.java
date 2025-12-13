@@ -9,6 +9,7 @@ import com.example.CampusJobBoard.security.JwtService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import com.example.CampusJobBoard.exceptions.*;
 
 /**
  * Handles user registration and login logic.
@@ -32,38 +33,33 @@ public class AuthService {
      */
     public AuthResponse register(RegisterRequest request) {
 
-        // Duplicate email
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new IllegalStateException("Email is already registered.");
+            throw new EmailAlreadyExistsException(request.getEmail());
         }
 
         if (request.getRole() == null) {
-            throw new IllegalStateException("Role is required.");
+            throw new InvalidRoleException("Role is required.");
         }
 
         // Prevent self-registering as admin
         if (request.getRole() == User.Role.ADMIN) {
 
             if (userRepository.countByRole(User.Role.ADMIN) >= 3) {
-                throw new IllegalStateException("Maximum of 3 admin accounts allowed.");
+                throw new AdminLimitExceededException("Maximum of 3 admin accounts allowed.");
             }
 
-            throw new IllegalStateException("Cannot self-register as admin.");
+            throw new InvalidRoleException("Cannot self-register as admin.");
         }
 
-        // Create user
         User newUser = new User();
         newUser.setFullName(request.getFullName());
         newUser.setEmail(request.getEmail());
         newUser.setPassword(passwordEncoder.encode(request.getPassword()));
         newUser.setRole(request.getRole());
-
-        // New users do NOT need first-time setup
         newUser.setMustUpdateProfile(false);
 
         userRepository.save(newUser);
 
-        // Build token
         UserDetails details = org.springframework.security.core.userdetails.User
                 .withUsername(newUser.getEmail())
                 .password(newUser.getPassword())
@@ -75,16 +71,17 @@ public class AuthService {
         return new AuthResponse(jwt, newUser.getRole().name(), newUser.isMustUpdateProfile());
     }
 
+
     /**
      * Authenticates an existing user and returns a signed JWT token.
      */
     public AuthResponse login(LoginRequest request) {
 
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new IllegalStateException("Invalid credentials"));
+                .orElseThrow(InvalidCredentialsException::new);
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new IllegalStateException("Invalid credentials");
+            throw new InvalidCredentialsException();
         }
 
         UserDetails details = org.springframework.security.core.userdetails.User

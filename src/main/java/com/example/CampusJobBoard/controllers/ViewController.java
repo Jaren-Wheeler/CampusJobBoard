@@ -8,8 +8,6 @@ import com.example.CampusJobBoard.services.ApplicationService;
 import com.example.CampusJobBoard.services.AuthService;
 import com.example.CampusJobBoard.services.JobService;
 import com.example.CampusJobBoard.services.UserService;
-import jakarta.validation.Valid;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -78,10 +76,8 @@ public class ViewController {
         System.out.println("AUTH = " + authentication);
         System.out.println("AUTHORITIES = " + authentication.getAuthorities());
 
-        String email = authentication.getName();  // always works if JWT is configured correctly
+        String email = authentication.getName();
         User user = userService.findByEmail(email);
-
-        // pass logged in user to the dashboard
         model.addAttribute("loggedInUser", user);
         model.addAttribute("jobs", jobService.getApprovedJobs());
 
@@ -115,10 +111,8 @@ public class ViewController {
         System.out.println("AUTH = " + authentication);
         System.out.println("AUTHORITIES = " + authentication.getAuthorities());
 
-        String email = authentication.getName();  // always works if JWT is configured correctly
+        String email = authentication.getName();
         User user = userService.findByEmail(email);
-
-        // do this but with their job postings instead of available jobs
         model.addAttribute("loggedInUser", user);
         model.addAttribute("jobs", jobService.getApprovedJobs());
         return "employer/dashboard";
@@ -146,7 +140,6 @@ public class ViewController {
         return "redirect:/student/dashboard";
     }
 
-
     /**
      * Admin dashboard.
      */
@@ -159,7 +152,15 @@ public class ViewController {
      * Super_Admin dashboard.
      */
     @GetMapping("/superadmin/dashboard")
-    public String superAdminDash() {
+    public String superAdminDash(Authentication authentication) {
+
+        String email = authentication.getName();
+        User user = userService.findByEmail(email);
+
+        if (user.getEmail().equals("superadmin@system.com")) {
+            return "redirect:/superadmin/setup";
+        }
+
         return "superadmin/dashboard";
     }
 

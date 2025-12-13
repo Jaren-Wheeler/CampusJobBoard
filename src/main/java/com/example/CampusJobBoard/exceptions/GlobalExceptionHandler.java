@@ -30,5 +30,42 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleCustomValidation(ValidationException ex) {
         return ResponseEntity.badRequest().body(ex.getErrors());
     }
+
+    @ExceptionHandler(AdminLimitExceededException.class)
+    public ResponseEntity<?> handleAdminLimit(AdminLimitExceededException ex) {
+        return ResponseEntity.badRequest()
+                .body(Map.of("error", ex.getMessage()));
+    }
+
+    @ExceptionHandler(JobNotFoundException.class)
+    public ResponseEntity<?> handleJobNotFound(JobNotFoundException ex) {
+        return ResponseEntity.status(404)
+                .body(Map.of("error", ex.getMessage()));
+    }
+
+    @ExceptionHandler(EmailAlreadyExistsException.class)
+    public ResponseEntity<?> handleEmailExists(EmailAlreadyExistsException ex) {
+        return ResponseEntity.badRequest()
+                .body(Map.of("email", ex.getMessage()));
+    }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<?> handleInvalidCredentials(InvalidCredentialsException ex) {
+        return ResponseEntity.status(401)
+                .body(Map.of("error", ex.getMessage()));
+    }
+
+    @ExceptionHandler(InvalidRoleException.class)
+    public ResponseEntity<?> handleInvalidRole(InvalidRoleException ex) {
+        return ResponseEntity.badRequest()
+                .body(Map.of("role", ex.getMessage()));
+    }
+
+    @ExceptionHandler(DuplicateApplicationException.class)
+    public ResponseEntity<?> handleDuplicateApplication(DuplicateApplicationException ex) {
+        return ResponseEntity.badRequest()
+                .body(Map.of("error", ex.getMessage()));
+    }
+
 }
 

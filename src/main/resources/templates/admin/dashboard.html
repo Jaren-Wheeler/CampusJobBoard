@@ -1,11 +1,51 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Admin Dashboard</title>
+
+    <!-- Shared head  -->
+    <th:block th:replace="fragments/_shared/head :: head"></th:block>
 </head>
-<body>
-<h1>Welcome, admin</h1>
-<p>Dashboard coming soon.</p>
+
+<body class="bg-gray-100 min-h-screen flex justify-center items-center">
+
+<div class="bg-white w-full max-w-5xl rounded-xl shadow-lg p-10">
+
+    <!-- Header -->
+    <h1 class="text-3xl font-semibold text-[#2A3810] mb-2">
+        Admin Dashboard
+    </h1>
+    <p class="text-gray-500 mb-8">
+        Review and moderate job postings submitted by employers.
+    </p>
+
+    <!-- Job moderation table -->
+    <div class="overflow-x-auto">
+        <table class="w-full border-collapse">
+            <thead>
+            <tr class="border-b text-gray-600 text-sm">
+                <th class="text-left py-3 px-2">Job Title</th>
+                <th class="text-left py-3 px-2">Employer</th>
+                <th class="text-left py-3 px-2">Category</th>
+                <th class="text-left py-3 px-2">Status</th>
+                <th class="text-left py-3 px-2">Actions</th>
+            </tr>
+            </thead>
+
+            <tbody id="jobsTableBody">
+            <!-- Rows injected dynamically by JS -->
+            <tr class="text-gray-400">
+                <td class="py-4 px-2" colspan="5">
+                    Loading pending job postings...
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<!-- Admin dashboard logic -->
+<script type="module" th:src="@{/js/admin/admin-dashboard.js}"></script>
 </body>
 </html>
