@@ -1,11 +1,99 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Employer Dashboard</title>
+
+    <!-- TailwindCSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-<h1>Welcome, Employer</h1>
-<p>Dashboard coming soon.</p>
+<body class="bg-gray-50">
+
+<!-- Header -->
+<div class="w-3/4 mx-auto flex justify-between items-center mt-4">
+    <h1 class="text-xl font-semibold">Welcome, <span th:text="${loggedInUser.fullName}"></span></h1>
+
+    <!-- success or error message -->
+    <div th:if="${error}" class="bg-red-100 text-red-800 p-3 rounded mb-4">
+        <p th:text="${error}"></p>
+    </div>
+
+    <div th:if="${success}" class="bg-green-100 text-green-800 p-3 rounded mb-4">
+        <p th:text="${success}"></p>
+    </div>
+
+    <div class="flex gap-4">
+        <a th:href="@{/dashboard/newPost}">
+            <button class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+                Create New Job
+            </button>
+        </a>
+        <a th:href="@{/login}">
+            <button class="px-4 py-2 bg-black text-white rounded hover:bg-red-600">
+                Logout
+            </button>
+        </a>
+    </div>
+</div>
+
+<!-- Job Postings Table -->
+<div class="w-3/4 mx-auto mt-6">
+    <h2 class="text-2xl font-bold mb-4 text-center">My Job Postings</h2>
+
+    <table class="w-full divide-y divide-gray-300 bg-white rounded-lg shadow overflow-hidden">
+        <thead class="bg-gray-100">
+        <tr>
+            <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Title</th>
+            <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Location</th>
+            <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Description</th>
+            <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Salary</th>
+            <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Category</th>
+            <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Deadline</th>
+            <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Status</th>
+            <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Created At</th>
+            <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Updated At</th>
+            <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Applicants</th>
+        </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200">
+        <tr th:each="job : ${postings}" class="hover:bg-gray-50">
+            <td class="px-4 py-2 text-sm text-gray-800" th:text="${job.jobTitle}"></td>
+            <td class="px-4 py-2 text-sm text-gray-800" th:text="${job.location}"></td>
+            <td class="px-4 py-2 text-sm text-gray-800" th:text="${job.description}"></td>
+            <td class="px-4 py-2 text-sm text-gray-800" th:text="${job.salary}"></td>
+            <td class="px-4 py-2 text-sm text-gray-800" th:text="${job.category}"></td>
+            <td class="px-4 py-2 text-sm text-gray-800" th:text="${#dates.format(job.deadline,'yyyy-MM-dd')}"></td>
+            <td class="px-4 py-2 text-sm text-gray-800" th:text="${job.status}"></td>
+            <td class="px-4 py-2 text-sm text-gray-800" th:text="${#dates.format(job.createdAt,'yyyy-MM-dd')}"></td>
+            <td class="px-4 py-2 text-sm text-gray-800" th:text="${#dates.format(job.updatedAt,'yyyy-MM-dd')}"></td>
+
+            <td class="px-4 py-2 text-sm text-blue-600 hover:underline">
+                <a th:href="@{/applications/{jobId}(jobId=${job.jobId})}"
+                   th:text="${#lists.size(job.applications)}">0</a>
+            </td>
+
+            <td class="px-4 py-2 text-sm">
+                <div class="flex gap-2">
+                    <a th:href="@{/jobs/edit/{id}(id=${job.jobId})}"
+                       class="px-3 py-1 bg-blue-600 text-white rounded text-xs hover:bg-blue-700">
+                        Edit
+                    </a>
+
+                    <form th:action="@{/jobs/delete/{id}(id=${job.jobId})}"
+                          method="post"
+                          onsubmit="return confirm('Are you sure you want to delete this job');">
+                        <button type="submit"
+                                class="px-3 py-1 bg-red-600 text-white rounded text-xs hover:bg-red-700">
+                            Delete
+                        </button>
+                    </form>
+
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
 </body>
 </html>

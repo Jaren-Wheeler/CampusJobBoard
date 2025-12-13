@@ -1,6 +1,7 @@
 package com.example.CampusJobBoard.entities;
 
 import jakarta.persistence.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 import java.util.Set;
@@ -23,6 +24,8 @@ public class Job {
 
     private String Category;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @Temporal(TemporalType.DATE)
     private Date Deadline;
 
     public enum Status {
@@ -35,8 +38,8 @@ public class Job {
 
     private Date UpdatedAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="UserId")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="user_id")
     private User user;
 
     // mapping to job application table. One job has many applications
@@ -125,6 +128,14 @@ public class Job {
 
     public void setDeadline(Date deadline) {
         Deadline = deadline;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
     public Date getCreatedAt() {
