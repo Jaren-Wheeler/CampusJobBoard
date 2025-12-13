@@ -159,9 +159,18 @@ public class ViewController {
      * Super_Admin dashboard.
      */
     @GetMapping("/superadmin/dashboard")
-    public String superAdminDash() {
+    public String superAdminDash(Authentication authentication) {
+
+        String email = authentication.getName();
+        User user = userService.findByEmail(email);
+
+        if (user.getEmail().equals("superadmin@system.com")) {
+            return "redirect:/superadmin/setup";
+        }
+
         return "superadmin/dashboard";
     }
+
 
     @GetMapping("/superadmin/setup")
     public String superAdminSetupPage() {

@@ -1,4 +1,4 @@
-import { authFetch } from "../_shared/index.js";
+
 
 const BASE = "/api/superadmin";
 
@@ -11,15 +11,11 @@ const BASE = "/api/superadmin";
  * never breaks while rendering.
  */
 export async function fetchAdmins() {
-    const res = await authFetch(`${BASE}/admins`, { method: "GET" });
-
-    if (!res.ok) {
-        console.error("Failed to load admins");
-        return [];
-    }
-
+    const res = await fetch(`${BASE}/admins`, { credentials: "same-origin" });
+    if (!res.ok) return [];
     return res.json();
 }
+
 
 /**
  * Sends a request to create a new admin.
@@ -29,8 +25,10 @@ export async function fetchAdmins() {
  * check 'res.ok' and show messages accordingly.
  */
 export async function createAdmin(adminData) {
-    return authFetch(`${BASE}/create-admin`, {
+    return fetch(`${BASE}/create-admin`, {
         method: "POST",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(adminData)
     });
 }
@@ -42,8 +40,9 @@ export async function createAdmin(adminData) {
  * ensures the target is actually an ADMIN before removing it.
  */
 export async function deleteAdmin(id) {
-    return authFetch(`${BASE}/admins/${id}`, {
-        method: "DELETE"
+    return fetch(`${BASE}/admins/${id}`, {
+        method: "DELETE",
+        credentials: "same-origin"
     });
 }
 

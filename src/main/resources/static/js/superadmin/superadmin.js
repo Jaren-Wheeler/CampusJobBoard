@@ -7,7 +7,6 @@
  *  - wiring up all button actions (create, delete, logout)
  */
 
-import { enforceSuperAdminAccess } from "./access-control.js";
 
 import { fetchAdmins } from "./admin-api.js";
 import { renderAdminTable, updateAdminCount } from "./admin-ui.js";
@@ -21,7 +20,6 @@ import {
 
 document.addEventListener("DOMContentLoaded", async () => {
 
-    enforceSuperAdminAccess();
 
     if (!document.getElementById("adminTable")) return;
 
