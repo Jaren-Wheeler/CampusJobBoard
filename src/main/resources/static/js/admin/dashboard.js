@@ -121,3 +121,6 @@ async function rejectJob(jobId) {
 
 // Initial load
 loadPendingJobs();
+
+window.approveJob = approveJob;
+window.rejectJob = rejectJob;
