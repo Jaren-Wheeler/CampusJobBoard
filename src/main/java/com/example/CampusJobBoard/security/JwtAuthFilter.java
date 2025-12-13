@@ -38,53 +38,63 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        //  Skip AUTH endpoints (login, register)
         String path = request.getServletPath();
+
+        // Skip JWT for non-API calls (UI pages use session login)
         if (!path.startsWith("/api/")) {
             filterChain.doFilter(request, response);
             return;
         }
-        // Also skip auth endpoints so login/register aren't JWT-protected
+
+        // Skip JWT for public auth endpoints
         if (path.startsWith("/api/auth")) {
             filterChain.doFilter(request, response);
             return;
         }
-        final String authHeader = request.getHeader("Authorization");
-        final String jwt;
-        final String username;
 
+        String authHeader = request.getHeader("Authorization");
+
+        // Skip if JWT header is missing
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        jwt = authHeader.substring(7);
-        username = jwtService.extractUsername(jwt);
+        String jwt = authHeader.substring(7);
 
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+        try {
+            // Extract username safely
+            String username = jwtService.extractUsername(jwt);
 
-            // Extract role from JWT
-            String role = jwtService.extractRole(jwt);
+            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            List<SimpleGrantedAuthority> authorities =
-                    List.of(new SimpleGrantedAuthority("ROLE_" + role));
+                String role = jwtService.extractRole(jwt);
+                List<SimpleGrantedAuthority> authorities =
+                        List.of(new SimpleGrantedAuthority("ROLE_" + role));
 
-            User tempUser = new User(username, "", authorities);
+                User tempUser = new User(username, "", authorities);
 
-            if (jwtService.validateToken(jwt, tempUser)) {
+                if (jwtService.validateToken(jwt, tempUser)) {
 
-                UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(
-                                tempUser,
-                                null,
-                                authorities
-                        );
+                    UsernamePasswordAuthenticationToken authToken =
+                            new UsernamePasswordAuthenticationToken(
+                                    tempUser,
+                                    null,
+                                    authorities
+                            );
 
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                }
             }
+
+        } catch (Exception ex) {
+            // Skip JWT and let request continue with session auth.
+            filterChain.doFilter(request, response);
+            return;
         }
 
         filterChain.doFilter(request, response);
     }
+
 }
