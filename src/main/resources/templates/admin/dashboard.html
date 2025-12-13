@@ -3,7 +3,7 @@
 <head>
     <title>Admin Dashboard</title>
 
-    <!-- Shared head -->
+    <!-- Shared head  -->
     <th:block th:replace="fragments/_shared/head :: head"></th:block>
 </head>
 
@@ -16,21 +16,10 @@
         Admin Dashboard
     </h1>
     <p class="text-gray-500 mb-8">
-        Review and manage job postings submitted by employers.
+        Review and moderate job postings submitted by employers.
     </p>
 
-    <!-- Placeholder panel -->
-    <div class="border border-dashed border-gray-300 rounded-lg p-6 mb-6">
-        <p class="text-lg font-medium text-gray-700">
-            Job moderation coming soon
-        </p>
-        <p class="text-gray-500 mt-1">
-            This dashboard will allow administrators to approve or reject
-            job postings once employers submit them.
-        </p>
-    </div>
-
-    <!-- Table skeleton -->
+    <!-- Job moderation table -->
     <div class="overflow-x-auto">
         <table class="w-full border-collapse">
             <thead>
@@ -43,10 +32,11 @@
             </tr>
             </thead>
 
-            <tbody>
+            <tbody id="jobsTableBody">
+            <!-- Rows injected dynamically by JS -->
             <tr class="text-gray-400">
                 <td class="py-4 px-2" colspan="5">
-                    No pending job postings available.
+                    Loading pending job postings...
                 </td>
             </tr>
             </tbody>
@@ -55,5 +45,7 @@
 
 </div>
 
+<!-- Admin dashboard logic -->
+<script type="module" th:src="@{/js/admin/admin-dashboard.js}"></script>
 </body>
 </html>
