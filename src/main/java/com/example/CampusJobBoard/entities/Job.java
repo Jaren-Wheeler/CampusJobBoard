@@ -1,98 +1,145 @@
 package com.example.CampusJobBoard.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.Date;
 import java.util.Set;
 
 @Entity
-@Table(name="job")
+@Table(name = "jobs") // make sure this matches your DB
 public class Job {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long JobId;
+    private Long jobId;
 
-    private String JobTitle;
+    @Column(nullable = false)
+    private String jobTitle;
 
-    private String Description;
+    @Column(nullable = false, length = 2000)
+    private String description;
 
-    private String Location;
+    @Column(nullable = false)
+    private String location;
 
-    private int Salary;
+    private int salary;
 
-    private String Category;
+    private String category;
 
-    private Date Deadline;
+    @Temporal(TemporalType.DATE)
+    private Date deadline;
 
     public enum Status {
-        PENDING, APPROVED, REJECTED
-    };
-    @Enumerated(EnumType.STRING)
-    private Status status;
-
-    private Date CreatedAt;
-
-    private Date UpdatedAt;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="UserId")
-    private User user;
-
-    // mapping to job application table. One job has many applications
-    @OneToMany(mappedBy="job", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<JobApplication> applications;
-
-
-
-    // GETTERS AND SETTERS //
-
-    public Long getJobId() {
-        return JobId;
+        PENDING,
+        APPROVED,
+        REJECTED
     }
 
-    public void setJobId(Long jobId) {
-        JobId = jobId;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Status status = Status.PENDING;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(updatable = false)
+    private Date createdAt;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnore
+    private User user;
+
+    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private Set<JobApplication> applications;
+
+    // -----------------------------
+    // Lifecycle hooks
+    // -----------------------------
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = new Date();
+        this.updatedAt = new Date();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = new Date();
+    }
+
+    // -----------------------------
+    // Getters & Setters
+    // -----------------------------
+
+    public Long getJobId() {
+        return jobId;
     }
 
     public String getJobTitle() {
-        return JobTitle;
+        return jobTitle;
     }
 
     public void setJobTitle(String jobTitle) {
-        JobTitle = jobTitle;
+        this.jobTitle = jobTitle;
     }
 
     public String getDescription() {
-        return Description;
+        return description;
     }
 
     public void setDescription(String description) {
-        Description = description;
+        this.description = description;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public int getSalary() {
-        return Salary;
+        return salary;
     }
 
     public void setSalary(int salary) {
-        Salary = salary;
+        this.salary = salary;
     }
 
     public String getCategory() {
-        return Category;
+        return category;
     }
 
     public void setCategory(String category) {
-        Category = category;
+        this.category = category;
+    }
+
+    public Date getDeadline() {
+        return deadline;
+    }
+
+    public void setDeadline(Date deadline) {
+        this.deadline = deadline;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
     }
 
     public Date getUpdatedAt() {
-        return UpdatedAt;
-    }
-
-    public void setUpdatedAt(Date updatedAt) {
-        UpdatedAt = updatedAt;
+        return updatedAt;
     }
 
     public User getUser() {
@@ -102,37 +149,4 @@ public class Job {
     public void setUser(User user) {
         this.user = user;
     }
-
-    public Set<JobApplication> getApplications() {
-        return applications;
-    }
-
-    public void setApplications(Set<JobApplication> applications) {
-        this.applications = applications;
-    }
-
-    public String getLocation() {
-        return Location;
-    }
-
-    public void setLocation(String location) {
-        Location = location;
-    }
-
-    public Date getDeadline() {
-        return Deadline;
-    }
-
-    public void setDeadline(Date deadline) {
-        Deadline = deadline;
-    }
-
-    public Date getCreatedAt() {
-        return CreatedAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        CreatedAt = createdAt;
-    }
-
 }
