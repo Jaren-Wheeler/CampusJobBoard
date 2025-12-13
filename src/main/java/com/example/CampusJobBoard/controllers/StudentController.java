@@ -23,21 +23,24 @@ public class StudentController {
     private final JobService jobService;
 
     public StudentController(ApplicationService appService,
-                                 UserService userService,
-                                 JobService jobService) {
+                             UserService userService,
+                             JobService jobService) {
         this.appService = appService;
         this.userService = userService;
         this.jobService = jobService;
     }
+
     // Return all approved jobs
     @GetMapping
     public List<Job> getAllJobs() {
         return appService.getApprovedJobs();
     }
 
-    // submit application
+    // Submit application
     @PostMapping("/submit")
-    public ResponseEntity<String> submitApplication(@RequestParam Long JobId, Principal principal) {
+    public ResponseEntity<String> submitApplication(
+            @RequestParam Long JobId,
+            Principal principal) {
 
         User user = userService.findByEmail(principal.getName());
         Job job = jobService.findJobById(JobId);
@@ -46,18 +49,16 @@ public class StudentController {
         app.setUser(user);
         app.setJob(job);
 
-        try {
-            appService.submit(app);
-            return ResponseEntity.ok("Application submitted successfully!");
-        } catch (IllegalStateException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        appService.submit(app);
+
+        return ResponseEntity.ok("Application submitted successfully!");
     }
 
-    // Get current user's applied jobs
+    // Get current user's applications
     @GetMapping("/applications")
-    public List<JobApplication> getMyApps(@RequestParam Long userId) {
-        User user = userService.findUserById(userId);
+    public List<JobApplication> getMyApps(Principal principal) {
+        User user = userService.findByEmail(principal.getName());
         return appService.getApplicationsByUser(user);
     }
 }
+

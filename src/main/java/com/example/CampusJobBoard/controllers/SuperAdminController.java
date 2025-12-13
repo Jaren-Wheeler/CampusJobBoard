@@ -63,15 +63,10 @@ public class SuperAdminController {
             return ResponseEntity.badRequest().body(errors);
         }
 
-        try {
-            userService.createAdmin(req);
-            return ResponseEntity.ok("Admin created successfully.");
-        } catch (IllegalStateException ex) {
+        userService.createAdmin(req);
 
-            return ResponseEntity.badRequest().body(Map.of("error", ex.getMessage()));
-        }
+        return ResponseEntity.ok("Admin created successfully.");
     }
-
 
     /**
      * Returns a list of all admins (id, name, email).
