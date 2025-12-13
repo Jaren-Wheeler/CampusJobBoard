@@ -2,6 +2,7 @@ package com.example.CampusJobBoard.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 import java.util.Set;
@@ -27,14 +28,23 @@ public class Job {
 
     private String category;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Temporal(TemporalType.DATE)
-    private Date deadline;
+    private Date Deadline;
 
     public enum Status {
-        PENDING,
-        APPROVED,
-        REJECTED
-    }
+        PENDING, APPROVED, REJECTED
+    };
+
+    private Date CreatedAt;
+
+    private Date UpdatedAt;
+
+
+    // mapping to job application table. One job has many applications
+    @OneToMany(mappedBy="job", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<JobApplication> applications;
+
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -52,9 +62,6 @@ public class Job {
     @JsonIgnore
     private User user;
 
-    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
-    private Set<JobApplication> applications;
 
     // -----------------------------
     // Lifecycle hooks

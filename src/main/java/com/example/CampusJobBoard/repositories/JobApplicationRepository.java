@@ -17,4 +17,6 @@ public interface JobApplicationRepository extends JpaRepository<JobApplication, 
 
     // checks if job application already exists for a certain job and user id.
     boolean existsByUserAndJob(User user, Job job);
+
+    List<JobApplication> findByJob(Job job);
 }

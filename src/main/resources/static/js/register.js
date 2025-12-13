@@ -175,6 +175,7 @@ const loginTab = document.getElementById("loginTab");
 const registerTab = document.getElementById("registerTab");
 const loginForm = document.getElementById("loginForm");
 const registerForm = document.getElementById("registerForm");
+const registerFormElement = document.querySelector("#registerForm form");
 
 loginTab.addEventListener("click", () => {
     loginForm.classList.remove("hidden");
@@ -184,6 +185,8 @@ registerTab.addEventListener("click", () => {
     loginForm.classList.add("hidden");
     registerForm.classList.remove("hidden");
 });
+
+
 
 // Handle Register button
 document.getElementById("registerBtn").addEventListener("click", (e) => {
@@ -237,10 +240,10 @@ document.getElementById("registerBtn").addEventListener("click", (e) => {
     }
 
     // BLOCK FORM SUBMIT IF INVALID
-    if (hasError) {
+    if (hasError){
         e.preventDefault();
         return;
     }
 
-    // Allow Spring Form submit to /register
+    registerFormElement.submit();
 });
