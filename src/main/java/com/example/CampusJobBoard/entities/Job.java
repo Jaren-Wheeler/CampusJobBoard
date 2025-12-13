@@ -30,15 +30,11 @@ public class Job {
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Temporal(TemporalType.DATE)
-    private Date Deadline;
+    private Date deadline;
 
     public enum Status {
         PENDING, APPROVED, REJECTED
     };
-
-    private Date CreatedAt;
-
-    private Date UpdatedAt;
 
 
     // mapping to job application table. One job has many applications
@@ -149,6 +145,14 @@ public class Job {
         return updatedAt;
     }
 
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
     public User getUser() {
         return user;
     }
@@ -156,4 +160,9 @@ public class Job {
     public void setUser(User user) {
         this.user = user;
     }
+
+    public Set<JobApplication> getApplications() {
+        return applications;
+    }
+
 }
