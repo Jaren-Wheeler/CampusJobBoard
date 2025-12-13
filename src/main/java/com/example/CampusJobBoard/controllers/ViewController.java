@@ -8,8 +8,6 @@ import com.example.CampusJobBoard.services.ApplicationService;
 import com.example.CampusJobBoard.services.AuthService;
 import com.example.CampusJobBoard.services.JobService;
 import com.example.CampusJobBoard.services.UserService;
-import jakarta.validation.Valid;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -142,7 +140,6 @@ public class ViewController {
         return "redirect:/student/dashboard";
     }
 
-
     /**
      * Admin dashboard.
      */
@@ -166,7 +163,6 @@ public class ViewController {
 
         return "superadmin/dashboard";
     }
-
 
     @GetMapping("/superadmin/setup")
     public String superAdminSetupPage() {
